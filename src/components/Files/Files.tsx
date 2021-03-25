@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./Files.less";
+import { REACT_APP_HTTPS } from "../../config"
 import { inject, observer } from "mobx-react";
 import { BasicStyle } from "../../theme/classic"
 import { LeftCircleFilled, RightCircleFilled, SyncOutlined } from '@ant-design/icons';
@@ -162,7 +163,7 @@ export const Files: React.FC<any> = (props) => {
                             customRequest={async (file) => {
                                 const sts = await FileStore.createSTS()
                                 const ossClientParams: AliyunSTSProps = sts.data
-                                ossClientParams['secure'] = false
+                                ossClientParams['secure'] = REACT_APP_HTTPS ? JSON.parse(REACT_APP_HTTPS) : false
 
                                 let client = new OSS(ossClientParams)
                                 let objectName: string;
