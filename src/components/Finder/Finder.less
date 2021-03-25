@@ -1,0 +1,37 @@
+@import "../../theme/classic.less";
+@import '~antd/lib/style/themes/default.less';
+
+.finder_container{
+  width: 74%;
+  max-width: calc(99% - 400px);
+  min-width: calc(99% - 350px);
+  height: 98%;
+  border: 2px solid @border-color-base;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  .finder_index{
+    width: 100%;
+    height: 40px;
+    background-color: @primary-color;
+    border-bottom: 1px;
+  }
+  .finder_main{
+    width: 100%;
+    height: calc(100% - 40px);
+    background-color: @basic-white;
+  }
+}
+
+.ant-tabs{
+  width: 100%;
+  height: 100%;
+  .ant-tabs-content-holder{
+    width: 100%;
+    height: 100%;
+    .ant-tabs-content{
+      width: 100%;
+      height: 100%;
+    }
+  }
+}

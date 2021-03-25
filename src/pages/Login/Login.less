@@ -1,0 +1,69 @@
+@import "../../theme/classic.less";
+@import '~antd/lib/style/themes/default.less';
+.login_page{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  .login_container{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+    width: 500px;
+    height: 500px;
+    .login_title{
+      width: 100%;
+      height : 10%;
+      color: @primary-color;
+      font-size: 40px;
+      font-weight: bolder;
+      display: flex;
+      justify-content: space-around;
+      justify-items: center;
+      span{
+        display: inline-block;
+      }
+    }
+    .login_tab{
+      width: 70%;
+      height: 30px;
+      display: flex;
+      justify-content: space-between;
+      .login_btn_container{
+        display: flex;
+        justify-content: space-between;
+        flex-direction: column;
+        color: @primary-color;
+        font-size: 18px;
+        font-weight: bold;
+        width: 45%;
+        height: 100%;
+        .login_btn{
+          display: flex;
+          justify-content: space-around;
+          align-items: center;
+          cursor: pointer;
+        }
+        .login_gap_enable{
+          display: block;
+        }
+        .login_gap_disable{
+          display: none;
+        }
+      }
+      .login_gap{
+        width: 100%;
+        height: 2px;
+        background-color: @level6;
+      }
+    }
+    .login_user{
+      width: 100%;
+      height: 70%;
+      display: flex;
+      justify-content: space-around;
+    }
+  }
+}

@@ -1,0 +1,59 @@
+@import "../../theme/classic.less";
+@import '~antd/lib/style/themes/default.less';
+
+.library_container{
+  width: 15%;
+  max-width: 400px;
+  min-width: 350px;
+  height: 98%;
+  background-color: @basic-white;
+  border: 2px solid @border-color-base;
+  border-right: 0;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
+  .library_title{
+    font-size: 18px;
+    height: 3%;
+    color: @primary-color;
+    margin-top: 3%;
+    display: flex;
+    align-items: center;
+    span{
+      display: inline-block;
+    }
+  }
+  .library_list{
+    width: 90%;
+    height: 85%;
+    overflow-y: auto;
+    .library_link{
+      display: flex;
+      justify-content: space-between;
+      width: 20%;
+      margin-right: 5px;
+      .library_link_btn{
+        font-size: 12px;
+        font-weight: bold;
+        cursor: pointer;
+        span{
+          color: @primary-color;
+        }
+      }
+    }
+  }
+  .library_create{
+    width: 90%;
+    height: 3%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: @border-radius-base;
+    margin: 10px 0 10px 0;
+    cursor: pointer;
+    span{
+      display: inline-block;
+    }
+  }
+}

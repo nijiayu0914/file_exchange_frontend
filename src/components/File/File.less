@@ -1,0 +1,74 @@
+@import "../../theme/classic.less";
+@import '../../../node_modules/antd/lib/style/themes/default.less';
+
+.file_container_view{
+  width: 100px;
+  height: 100px;
+  margin: 15px 15px 15px 15px;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  .file_detail{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+    .file_name{
+      width: 100px;
+      height: 36px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      span{
+        font-size: 10px;
+        display: inline-block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        -o-text-overflow: ellipsis;
+        word-break: break-all;
+        white-space: nowrap;
+      }
+    }
+  }
+}
+
+.file_container_list{
+  width: 100%;
+  height: 35px;
+  margin: 5px 0 0 15px;
+  .file_detail{
+    display: flex;
+    align-items: center;
+    .file_normal{
+      font-size: 14px;
+      margin-right: 20px;
+    }
+    .file_name{
+      width: 300px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      -o-text-overflow: ellipsis;
+    }
+    .file_content_type{
+      width: 300px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      -o-text-overflow: ellipsis;
+    }
+    .file_size{
+      width: 300px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      -o-text-overflow: ellipsis;
+    }
+    .file_modifytime{
+      width: 300px;overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      -o-text-overflow: ellipsis;
+    }
+  }
+}

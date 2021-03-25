@@ -1,0 +1,36 @@
+@import "../../theme/classic.less";
+@import '~antd/lib/style/themes/default.less';
+
+.navigation_container{
+  width: 100%;
+  height: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: @basic-white;
+  .navigation_logo{
+    width: 250px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+  }
+  .navigation_user{
+    width: 80px;
+    height:40px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    color: @text-color-secondary;
+    font-size: 18px;
+  }
+}
+.navigation_user_item{
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  span{
+    display: inline-block;
+  }
+}
