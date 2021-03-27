@@ -85,7 +85,7 @@ export default class UserInfoStore {
     }
 
     @action delToken(){
-        return new Promise((resolve,reject)=>{
+        return new Promise((resolve, reject)=>{
             instance.delete(API.delToken).then(res => {
                 resolve(res)
             }).catch(error => {

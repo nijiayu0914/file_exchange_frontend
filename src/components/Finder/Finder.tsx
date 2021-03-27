@@ -9,6 +9,7 @@ const { TabPane } = Tabs;
 export const Finder: React.FC<any> = ({ LibraryStore, FileStore }) => {
     const triggerLibrary = (uuid: string) => {
         FileStore.setActiveLibrary(uuid)
+        FileStore.clearCheckedFile()
     }
     const closeLibrary = (uuid: string) => {
         LibraryStore.closeLibrary(uuid)
@@ -17,6 +18,7 @@ export const Finder: React.FC<any> = ({ LibraryStore, FileStore }) => {
             && FileStore.setActiveLibrary(LibraryStore.openLibraryList[0][0])
         }
     }
+
     return (
         <div className="finder_container">
             <div className="finder_index"/>
@@ -50,9 +52,8 @@ export const Finder: React.FC<any> = ({ LibraryStore, FileStore }) => {
                     ))}
                 </Tabs>
             </div>
-
         </div>
-    );
-};
+    )
+}
 
 export default inject('LibraryStore', 'FileStore')(observer(Finder));

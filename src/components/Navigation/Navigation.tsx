@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
 import "./Navigation.less"
-import Logo from "../../assets/LOGO.svg";
+import { ReactComponent as Logo } from "../../assets/LOGO.svg";
 import { useHistory } from 'react-router-dom';
 import {inject, observer} from "mobx-react";
 import { Menu, Dropdown } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
+import Icon, { DownOutlined } from '@ant-design/icons';
 
 export const Navigation: React.FC<any> = ({UserInfoStore}) => {
     const history: useHistory = useHistory();
@@ -60,7 +60,7 @@ export const Navigation: React.FC<any> = ({UserInfoStore}) => {
     return (
         <div className="navigation_container">
             <div className="navigation_logo">
-                <img src={Logo} alt="PORTAL"/>
+                <Icon component={Logo} style={{fontSize: 153}}/>
             </div>
             <div className="navigation_user">
                 <Dropdown overlay={menu} placement="bottomCenter">

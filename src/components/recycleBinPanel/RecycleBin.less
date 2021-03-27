@@ -1,0 +1,29 @@
+@import "../../theme/classic.less";
+@import '~antd/lib/style/themes/default.less';
+
+.recycle_bin_panel_collapse{
+  height: 200px;
+  overflow: auto;
+  .recycle_bin_panel_collapse_main{
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    .recycle_bin_panel_collapse_content{
+      display: inline-block;
+      margin-right: 10px;
+      width: 100%;
+      overflow: hidden;
+      white-space:nowrap;
+      text-overflow: ellipsis;
+      -o-text-overflow: ellipsis;
+      color: @text-color-secondary;
+      font-size: 10px;
+    }
+    .recycle_bin_panel_collapse_restore{
+      cursor: pointer;
+    }
+    .recycle_bin_panel_collapse_delete{
+      cursor: pointer;
+    }
+  }
+}

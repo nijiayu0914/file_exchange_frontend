@@ -61,7 +61,7 @@ export default class LibraryStore {
     }
 
     @action listLibrary(){
-        return new Promise((resolve,reject)=>{
+        return new Promise((resolve, reject)=>{
             instance.get(API.listLibrary).then(res => {
                 this.libraryList = res.data
                 this.showLibraryList = res.data
@@ -74,7 +74,7 @@ export default class LibraryStore {
     }
 
     @action renameLibrary(uuid: string, newName: string){
-        return new Promise((resolve,reject)=>{
+        return new Promise((resolve, reject)=>{
             instance.get(API.changeLibraryName, {
                 params:{
                     "uuid": uuid,
@@ -93,7 +93,7 @@ export default class LibraryStore {
     }
 
     @action deleteLibrary(uuid: string){
-        return new Promise((resolve,reject)=>{
+        return new Promise((resolve, reject)=>{
             instance.get(API.deleteLibrary, {
                 params:{"uuid": uuid}
             }).then(res => {

@@ -1,0 +1,18 @@
+@import "../../theme/classic.less";
+@import '~antd/lib/style/themes/default.less';
+
+.copy_panel_collapse{
+  height: 200px;
+  overflow: auto;
+  .copy_panel_collapse_main{
+    margin-bottom: 3px;
+    .copy_panel_collapse_content{
+      overflow: hidden;
+      white-space:nowrap;
+      text-overflow: ellipsis;
+      -o-text-overflow: ellipsis;
+      color: @text-color-secondary;
+      font-size: 10px;
+    }
+  }
+}

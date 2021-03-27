@@ -20,7 +20,7 @@ interface AliyunSTSProps {
     region: string
 }
 
-interface  FileProps {
+interface FileProps {
     name: string,
     size: number,
     category: string,
@@ -30,4 +30,26 @@ interface  FileProps {
     contentType: string,
     modifyTime: any,
     suffix: string
+}
+
+interface CopyFileProps {
+    file_uuid: string,
+    origin_file: string,
+    dest_file: string,
+    versionid: string
+}
+
+interface MultiCopyFileProps {
+    file_uuid: string,
+    copy_list: CopyFileProps[]
+}
+
+interface RecycleBinProps {
+    uuid: string,
+    libraryName: string,
+    isLatest: boolean,
+    key: string,
+    showName: string,
+    lastModified: string,
+    versionId: string
 }

@@ -1,11 +1,18 @@
-import React, { useEffect } from "react";
+import React from "react";
 import "./File.less"
 import {inject, observer} from "mobx-react";
-import { Menu, Dropdown } from 'antd';
+import {Dropdown, Menu} from 'antd';
 import FileIcon from "../FileIcon/FileIcon";
 
 export const File: React.FC<any> = (props) => {
-    const { uuid, libraryName, file, how, LibraryStore, FileStore } = props
+    const {
+        uuid, listIndex, file, how, cauSize,
+        shiftAddCheckedFile, FileStore, changeFilePath } = props
+    const doubleClickFile = () => {
+        if(file.category === 'folder'){
+            changeFilePath(file.name.replace(uuid + '/', ''))
+        }
+    }
     const menu = (
         <Menu>
             <Menu.Item key="1">1st menu item</Menu.Item>
@@ -18,12 +25,41 @@ export const File: React.FC<any> = (props) => {
             <div className={how ? "file_container_view": "file_container_list"}>
                 {
                     how ?
-                        <div className="file_detail">
+                        <div className={FileStore.checkedFile.has(file.name)
+                            ? "file_detail checked" : "file_detail file_hover"}
+                             onClick={(e) => {
+                                 e.stopPropagation()
+                                 if (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) {
+                                     FileStore.addCheckedFile(file.name, false)
+                                 }else if(e.shiftKey){
+                                     shiftAddCheckedFile(listIndex)
+                                 }else{
+                                     FileStore.addCheckedFile(file.name)
+                                 }
+                                 cauSize()
+                             }}
+                             onDoubleClick={() => {doubleClickFile()}}
+                        >
                             <FileIcon fileType={file.suffix} size={64} />
-                            <div className="file_name"><span>{file.rename.replace('/', '')}</span></div>
+                            <div className="file_name"><span>{
+                                file.rename.replace('/', '')}</span></div>
                         </div>
                         :
-                        <div className="file_detail">
+                        <div className={FileStore.checkedFile.has(file.name)
+                            ? "file_detail checked" : "file_detail file_hover"}
+                             onClick={(e) => {
+                                 e.stopPropagation()
+                                 if (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) {
+                                     FileStore.addCheckedFile(file.name, false)
+                                 }else if(e.shiftKey){
+                                     shiftAddCheckedFile(listIndex)
+                                 }else{
+                                     FileStore.addCheckedFile(file.name)
+                                 }
+                                 cauSize()
+                             }}
+                             onDoubleClick={() => {doubleClickFile()}}
+                        >
                             <div className="file_icon" style={{marginRight: "10px"}}>
                                 <FileIcon fileType={file.suffix} size={28}/>
                             </div>

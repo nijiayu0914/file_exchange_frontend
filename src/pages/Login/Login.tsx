@@ -2,7 +2,8 @@ import React, { useState }  from "react";
 import "./Login.less"
 import SignIn  from "../../components/SignIn/SignIn"
 import SignUp from "../../components/SignUp/SignUp"
-import Logo from "../../assets/LOGO.svg"
+import { ReactComponent as Logo } from "../../assets/LOGO.svg";
+import Icon from "@ant-design/icons";
 
 
 export const Login: React.FC = () => {
@@ -14,7 +15,7 @@ export const Login: React.FC = () => {
         <div className="login_page">
             <div className="login_container">
                 <div className="login_title">
-                    <img src={Logo} alt="PORTAL"/>
+                    <Icon component={Logo} />
                 </div>
                 <div className="login_tab">
                     <div className="login_btn_container">

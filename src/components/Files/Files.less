@@ -1,6 +1,14 @@
 @import "../../theme/classic.less";
 @import '../../../node_modules/antd/lib/style/themes/default.less';
 
+.files_path_icon_theme_color{
+  svg{
+    path{
+      fill: @primary-color;
+    }
+  }
+}
+
 .files_container{
   width: 100%;
   height: 100%;
@@ -64,8 +72,9 @@
       align-items: center;
       .files_path_icon_container{
         min-width: 55px;
+        height: 24px;
         display: flex;
-        justify-content: space-between;
+        justify-content: space-around;
         align-items: center;
         cursor: pointer;
         margin-right: 1%;
@@ -79,7 +88,7 @@
   }
   .files_show{
     width: 100%;
-    height: calc(100% - 40px - 20px);
+    height: calc(100% - 40px - 20px - 10px);
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
@@ -87,7 +96,42 @@
     align-content: flex-start;
     overflow: auto;
   }
+  .files_info{
+    width: 100%;
+    height: 10px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    font-weight: bold;
+    div{
+      margin-right: 20px;
+    }
+  }
   .files_progress{
     height: 20px;
+  }
+}
+.files_look_container{
+  display: flex;
+  margin-bottom: 5%;
+  border: 1px solid @border-color-base;
+  flex-direction: column;
+  overflow: auto;
+  .files_look_row{
+    display: flex;
+    .files_look_tag{
+      width: 30%;
+    }
+    .files_look_content{
+      width: 70%;
+    }
+    span{
+      display: inline-block;
+      overflow: hidden;
+      white-space:nowrap;
+      text-overflow: ellipsis;
+      -o-text-overflow: ellipsis;
+      color:@text-color;
+    }
   }
 }

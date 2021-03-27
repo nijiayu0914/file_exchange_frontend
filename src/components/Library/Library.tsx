@@ -4,7 +4,6 @@ import { BasicStyle } from "../../theme/classic"
 import { inject, observer } from "mobx-react";
 import { FolderAddFilled, ExclamationCircleOutlined } from "@ant-design/icons"
 import {Avatar, Dropdown, Input, List, Menu, message, Modal} from 'antd';
-import FileStore from "../../store/modules/FileStore/FileStore";
 const { Search } = Input;
 
 export const Library: React.FC<any> = ({LibraryStore, FileStore}) => {
@@ -26,6 +25,7 @@ export const Library: React.FC<any> = ({LibraryStore, FileStore}) => {
     }
     const openLibrary = (uuid: string, libraryName: string) => {
         LibraryStore.openLibrary(uuid, libraryName)
+        FileStore.clearCheckedFile()
         FileStore.setActiveLibrary(uuid)
     }
     const modalRename = (uuid: string, originName: string) => {

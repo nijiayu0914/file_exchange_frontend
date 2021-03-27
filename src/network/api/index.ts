@@ -35,3 +35,24 @@ export const getGrant = REACT_APP_BASE_URL + "/file/grant"
 
 // 更新用量
 export const updateUsage = REACT_APP_BASE_URL + "/file/update_usage"
+
+// 下载文件
+export const downloadFile = REACT_APP_BASE_URL + "/file/download"
+
+// 删除文件
+export const deleteFile = REACT_APP_BASE_URL + "/file/delete_file"
+
+// 列举文件版本
+export const listFileVersion = REACT_APP_BASE_URL + "/file/list_file_version"
+
+// 拷贝多个文件
+export const copyFiles = REACT_APP_BASE_URL + "/file/copy_multi_files"
+
+// 列举删除标记
+export const listDeleteMarkers = REACT_APP_BASE_URL + "/file/list_delete_markers"
+
+// 永久删除多个文件
+export const deleteFilesForever = REACT_APP_BASE_URL + "/file/delete_files_forever"
+
+// 还原文件
+export const restoreFile = REACT_APP_BASE_URL + "/file/restore_file"
