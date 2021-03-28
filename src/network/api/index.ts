@@ -42,6 +42,9 @@ export const downloadFile = REACT_APP_BASE_URL + "/file/download"
 // 删除文件
 export const deleteFile = REACT_APP_BASE_URL + "/file/delete_file"
 
+// 删除文件夹
+export const deleteFolder = REACT_APP_BASE_URL + "/file/delete_child_file"
+
 // 列举文件版本
 export const listFileVersion = REACT_APP_BASE_URL + "/file/list_file_version"
 
@@ -56,3 +59,6 @@ export const deleteFilesForever = REACT_APP_BASE_URL + "/file/delete_files_forev
 
 // 还原文件
 export const restoreFile = REACT_APP_BASE_URL + "/file/restore_file"
+
+// 检查用量 check_capacity
+export const checkCapacity = REACT_APP_BASE_URL + "/file/check_capacity"

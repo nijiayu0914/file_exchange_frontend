@@ -88,6 +88,21 @@ export default class FileStore {
         })
     }
 
+    @action checkCapacity(uuid: string){
+        return new Promise((resolve, reject)=>{
+            instance.get(API.checkCapacity, {
+                params:{
+                    "uuid": uuid
+                }
+            }).then(res => {
+                resolve(res)
+            }).catch(error => {
+                message.error("查询失败").then()
+                reject(error);
+            });
+        })
+    }
+
     @action updateUsage(uuid: string, usageCapacity: number, how: string){
         return new Promise((resolve, reject)=>{
             instance.put(API.updateUsage, {
@@ -154,6 +169,20 @@ export default class FileStore {
         })
     }
 
+    @action deleteFolder(uuid: string, path: string){
+        return new Promise((resolve, reject)=>{
+            instance.post(API.deleteFolder, {
+                "file_uuid": uuid,
+                "path": path
+            }).then(res => {
+                resolve(res)
+            }).catch(error => {
+                message.error("删除失败").then()
+                reject(error);
+            });
+        })
+    }
+
     @action listFileVersion(uuid: string, path: string){
         return new Promise((resolve, reject)=>{
             instance.get(API.listFileVersion, {
@@ -205,12 +234,13 @@ export default class FileStore {
         })
     }
 
-    @action listDeleteMarkers(uuid: string, delimiter: string = ''){
+    @action listDeleteMarkers(uuid: string, force: boolean=false, delimiter: string = ''){
         return new Promise((resolve, reject)=>{
             instance.get(API.listDeleteMarkers, {
                 params:{
                     "uuid": uuid,
-                    "delimiter": delimiter
+                    "delimiter": delimiter,
+                    "force": force
                 }
             }).then(res => {
                 resolve(res)

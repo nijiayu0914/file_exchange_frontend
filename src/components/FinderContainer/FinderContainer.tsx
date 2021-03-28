@@ -12,11 +12,13 @@ const { Panel } = Collapse;
 export const FinderContainer: React.FC<any> = (props) => {
     const { uuid, libraryName, FileStore } = props
     const [RecycleBinList, setRecycleBinList] = useState<RecycleBinProps[]>([])
+    // 通过状态决定文件列表页面是否需要强制刷新，避免初始化时多次调用接口
+    const [BinChange, setBinChange] = useState<boolean>(false)
     const genSyncOutlined = () => (
         <SyncOutlined onClick={
             event => {
                 event.stopPropagation()
-                listDeleteMarkers()
+                listDeleteMarkers(false, true)
             }}/>
         )
     const genClearOutlined = () => (
@@ -26,8 +28,8 @@ export const FinderContainer: React.FC<any> = (props) => {
                 FileStore.clearCopiedFile()
             }}/>
         )
-    const listDeleteMarkers = () => {
-        FileStore.listDeleteMarkers(uuid).then(res =>{
+    const listDeleteMarkers = (refresh: boolean=false, force: boolean=false) => {
+        FileStore.listDeleteMarkers(uuid, force).then(res =>{
             let binData: RecycleBinProps[] = []
             res.data && res.data.forEach(item => {
                 item['uuid'] = uuid
@@ -36,6 +38,9 @@ export const FinderContainer: React.FC<any> = (props) => {
                 binData.push(item)
             })
             setRecycleBinList(binData)
+            if(refresh){
+                setBinChange(pre => {return !pre})
+            }
         })
     }
     useEffect(() => {
@@ -51,6 +56,8 @@ export const FinderContainer: React.FC<any> = (props) => {
                     libraryName={libraryName}
                     RecycleBinList={RecycleBinList}
                     listDeleteMarkers={listDeleteMarkers}
+                    BinChange={BinChange}
+                    setBinChange={setBinChange}
                 />
             </div>
             <div className="finderContainer_right">
@@ -73,6 +80,7 @@ export const FinderContainer: React.FC<any> = (props) => {
                         <RecycleBin
                             RecycleBinList={RecycleBinList}
                             listDeleteMarkers={listDeleteMarkers}
+                            setBinChange={setBinChange}
                         />
                     </Panel>
                 </Collapse>

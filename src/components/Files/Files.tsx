@@ -4,7 +4,7 @@ import { REACT_APP_HTTPS } from "../../config"
 import { inject, observer } from "mobx-react";
 import { BasicStyle } from "../../theme/classic"
 import Icon, { LeftCircleFilled, RightCircleFilled, SyncOutlined } from '@ant-design/icons';
-import {Drawer, Input, message, Modal, Progress, Tooltip, Upload} from "antd";
+import { Drawer, Select, Input, message, Modal, Progress, Tooltip, Upload } from "antd";
 import OSS from 'ali-oss'
 import { ReactComponent as UploadIcon } from "../../assets/pageicon/Upload.svg";
 import { ReactComponent as Download } from "../../assets/pageicon/Download.svg";
@@ -14,11 +14,15 @@ import { ReactComponent as Look } from "../../assets/pageicon/Look.svg";
 import { ReactComponent as CreateFolder } from "../../assets/pageicon/CreateFolder.svg";
 import { ReactComponent as List } from "../../assets/pageicon/List.svg";
 import { ReactComponent as View } from "../../assets/pageicon/View.svg";
+import { ReactComponent as Folder } from "../../assets/fileicon/File.svg";
 import File from "../File/File"
+const { Option } = Select;
 
 export const Files: React.FC<any> = (props) => {
-    const { uuid, libraryName, RecycleBinList, listDeleteMarkers, FileStore } = props
+    const { uuid, libraryName, BinChange, listDeleteMarkers, FileStore } = props
+    const [isInit, setIsInit] = useState<boolean>(true)
     const [currentFilePath, setCurrentFilePath] = useState<string>('')
+    const [currentSearchPath, setCurrentSearchPath] = useState<string>('')
     const [currentFileList, setCurrentFileList] = useState<FileProps[]>([])
     const [showMethod, setShowMethod] = useState<boolean>(true)
     const [uploadProgress, setUploadProgress] = useState<number>(0)
@@ -26,6 +30,8 @@ export const Files: React.FC<any> = (props) => {
     const [look, setLook] = useState<boolean>(false)
     const [lookedFile, setlookedFile] = useState<FileProps[]>([])
     const [controlClick, setControlClick] = useState<boolean>(false)
+    const [historyPath, setHistoryPath] = useState<string[]>([''])
+    const [historyPathCursor, setHistoryPathCursor] = useState<number>(0)
 
     const copyKeyboardEvent = (e) => {
         if(e.keyCode === 67){
@@ -40,8 +46,46 @@ export const Files: React.FC<any> = (props) => {
             }
         }
     }
-    const changeFilePath = (path: string) => {
+    const addHistoryPath = (path: string) => {
+        if(historyPathCursor === 0){
+            let oldPath = historyPath.slice(0)
+            if(oldPath[0] !== path){
+                oldPath.unshift(path)
+                setHistoryPath(oldPath)
+            }
+        }else{
+            let oldPath = historyPath.slice(
+                historyPathCursor, historyPath.length)
+            if(oldPath[0] !== path){
+                oldPath.unshift(path)
+                setHistoryPath(oldPath)
+            }
+            setHistoryPathCursor(0)
+        }
+    }
+    const historyBackward = () => {
+        if(historyPathCursor < historyPath.length - 1){
+            let path: string = historyPath[historyPathCursor + 1]
+            setHistoryPathCursor(historyPathCursor + 1)
+            changeFilePath(path, false)
+        }
+    }
+    const historyForward = () => {
+        if(historyPathCursor > 0){
+            let path: string = historyPath[historyPathCursor - 1]
+            setHistoryPathCursor(historyPathCursor - 1)
+            changeFilePath(path, false)
+        }
+    }
+    const changeSearchPath = (path: string) => {
+        setCurrentSearchPath(path)
+    }
+    const changeFilePath = (path: string, addHistory: boolean = true) => {
         setCurrentFilePath(path)
+        setCurrentSearchPath(path)
+        if(addHistory){
+            addHistoryPath(path)
+        }
     }
     const showMethodTrigger = () => {
         setShowMethod((prevState => {
@@ -62,25 +106,39 @@ export const Files: React.FC<any> = (props) => {
                     'originName': '', 'rename': '', 'versionId': '',
                     'contentType': '', 'modifyTime': '', 'suffix': ''
                 }
-                if(collectionData[i]['meta']['X-Oss-Meta-Category'][0] === 'folder'){
+                if(collectionData[i]['meta']['X-Oss-Meta-Category'] &&
+                    collectionData[i]['meta']['X-Oss-Meta-Category'][0] === 'folder'){
                     file['name'] = collectionData[i]['basic']
                     file['size'] = 0
                     file['category'] = 'folder'
                     file['suffix'] = ''
-                }else if(collectionData[i]['meta']['X-Oss-Meta-Category'][0] === 'file'){
+                }else if(collectionData[i]['meta']['X-Oss-Meta-Category'] &&
+                    collectionData[i]['meta']['X-Oss-Meta-Category'][0] === 'file'){
                     file['name'] = collectionData[i]['basic']['Key']
                     file['size'] = collectionData[i]['basic']['Size']
                     file['category'] = 'file'
                     const fileNameSplit = collectionData[i]['meta']['X-Oss-Meta-Origin-Name'][0].split('.')
                     file['suffix'] = decodeURIComponent(fileNameSplit[fileNameSplit.length - 1]).toLowerCase()
+                }else if(!collectionData[i]['meta']['X-Oss-Meta-Category']){
+                    file['name'] = collectionData[i]['basic']
+                    file['size'] = 0
+                    file['category'] = 'folder'
+                    file['suffix'] = ''
                 }else{
                     continue
                 }
-                file['originName'] = decodeURIComponent(collectionData[i]['meta']['X-Oss-Meta-Origin-Name'][0])
-                file['rename'] = decodeURIComponent(collectionData[i]['meta']['X-Oss-Meta-Rename'][0])
-                file['versionId'] = collectionData[i]['meta']['X-Oss-Version-Id'][0]
-                file['contentType'] = collectionData[i]['meta']['Content-Type'][0]
-                file['modifyTime'] = collectionData[i]['meta']['Last-Modified'][0]
+                file['originName'] = decodeURIComponent(
+                    collectionData[i]['meta']['X-Oss-Meta-Origin-Name'] ?
+                        collectionData[i]['meta']['X-Oss-Meta-Origin-Name'][0] : '')
+                file['rename'] = decodeURIComponent(
+                    collectionData[i]['meta']['X-Oss-Meta-Rename'] ?
+                        collectionData[i]['meta']['X-Oss-Meta-Rename'][0] : '')
+                file['versionId'] = collectionData[i]['meta']['X-Oss-Version-Id'] ?
+                    collectionData[i]['meta']['X-Oss-Version-Id'][0] : ''
+                file['contentType'] = collectionData[i]['meta']['Content-Type'] ?
+                    collectionData[i]['meta']['Content-Type'][0] : ''
+                file['modifyTime'] = collectionData[i]['meta']['Last-Modified'] ?
+                    collectionData[i]['meta']['Last-Modified'][0] : ''
                 if(file.originName !== currentFilePath){
                     currentFiles.push(file)
                 }
@@ -92,10 +150,7 @@ export const Files: React.FC<any> = (props) => {
         })
     }
     const createFolderModal = (uuid: string, currentFilePath: string) => {
-        if (currentFilePath.length > 0){
-            currentFilePath = currentFilePath + '/'
-        }
-        let folderName = currentFilePath + ''
+        let folderName: string
         Modal.confirm({
             title: "创建新文件夹？",
             content: (
@@ -114,7 +169,7 @@ export const Files: React.FC<any> = (props) => {
                 if(!isExist){
                     FileStore.createFolder(uuid, folderName).then(() => {
                         message.success("创建成功")
-                        listFiles(uuid, currentFilePath)
+                        listFiles(uuid, currentFilePath, true)
                     })
                 }else{
                     message.warn("文件夹已存在")
@@ -169,8 +224,13 @@ export const Files: React.FC<any> = (props) => {
     const deleteFile = async () => {
         for (const item of currentFileList) {
             if (FileStore.checkedFile.has(item.name)) {
-                await FileStore.deleteFile(
-                    uuid, item.name.replace(uuid + '/', ''))
+                if(item.category === 'folder'){
+                    await FileStore.deleteFolder(
+                        uuid, item.name.replace(uuid + '/', ''))
+                }else{
+                    await FileStore.deleteFile(
+                        uuid, item.name.replace(uuid + '/', ''))
+                }
                 message.success(item.rename + ',删除成功')
             }
         }
@@ -195,22 +255,43 @@ export const Files: React.FC<any> = (props) => {
         // eslint-disable-next-line
     }, [currentFilePath])
     useEffect(() => {
-        listFiles(uuid, currentFilePath)
+        listFiles(uuid, currentFilePath, false)
         // eslint-disable-next-line
     }, [currentFilePath])
     useEffect(() => {
-        listFiles(uuid, currentFilePath, true)
+        if(isInit){
+            setIsInit(false)
+        }else{
+            listFiles(uuid, currentFilePath, true)
+        }
         // eslint-disable-next-line
-    }, [RecycleBinList])
+    }, [BinChange])
+    useEffect(() => {
+        setControlClick(false)
+        return () => {
+            setControlClick(false)
+        }
+    }, []);
     return (
         <div className="files_container">
             <div className="files_path">
                 <div className="files_path_btn">
                     <LeftCircleFilled
-                        style={{ color: BasicStyle["@primary-color"], fontSize: 20, cursor: "pointer" }}/>
+                        className="files_btn_style"
+                        style={{ fontSize: 20, cursor: "pointer" }}
+                        onClick={() => {
+                            historyBackward()
+                        }}
+                    />
                     <RightCircleFilled
-                        style={{ color: BasicStyle["@primary-color"], fontSize: 20, cursor: "pointer" }} />
+                        className="files_btn_style"
+                        style={{ fontSize: 20, cursor: "pointer" }}
+                        onClick={() => {
+                            historyForward()
+                        }}
+                    />
                     <SyncOutlined
+                        className="files_btn_style"
                         style={{ color: BasicStyle["@primary-color"], fontSize: 20, cursor: "pointer" }}
                         onClick = {() => {
                             if(controlClick){
@@ -225,13 +306,30 @@ export const Files: React.FC<any> = (props) => {
                     <div className="files_path_library_name"><span>{libraryName}</span></div>
                     <div className="files_path_split"><span>/</span></div>
                     <div className="files_path_library_search">
-                        <Input
-                            value={currentFilePath}
-                            onChange={(e) =>{
-                                changeFilePath(e.target.value)
+                        <Select
+                            showSearch
+                            value={currentSearchPath}
+                            style={{ width: "100%" }}
+                            onSearch={(value: string) => {
+                                changeSearchPath(value)
                                 }
                             }
-                        />
+                            onSelect={(value: string) => {
+                                changeFilePath(value)
+                            }}
+                        >
+                            {currentFileList.map(item => {
+                                if(item.category === 'folder'){
+                                    return (
+                                        <Option key={item.originName} value={item.originName}>
+                                            <Icon component={Folder} style={{fontSize: 16}}/>
+                                            {item.rename}
+                                        </Option>
+                                    )
+                                }
+                                return null
+                            })}
+                        </Select>
                     </div>
                 </div>
                 <div className="files_path_operator">
@@ -268,17 +366,18 @@ export const Files: React.FC<any> = (props) => {
                                 }
                             }
                             customRequest={async (file) => {
+                                const capCheck = await FileStore.checkCapacity(uuid)
+                                if(file.file['size'] / 1024 / 1024 > capCheck['data']['free']){
+                                    message.warning("已超限额，无法上传")
+                                    return
+                                }
                                 const sts = await FileStore.createSTS()
                                 const ossClientParams: AliyunSTSProps = sts.data
                                 ossClientParams['secure'] = REACT_APP_HTTPS ? JSON.parse(REACT_APP_HTTPS) : false
 
                                 let client = new OSS(ossClientParams)
                                 let objectName: string;
-                                if(currentFilePath.length === 0){
-                                    objectName = uuid + '/' + currentFilePath + file.file['name']
-                                }else{
-                                    objectName = uuid + '/' + currentFilePath + '/' + file.file['name']
-                                }
+                                objectName = uuid + '/' + currentFilePath + file.file['name']
                                 let uploadRes = await client.multipartUpload(
                                     objectName,
                                     file.file,
@@ -336,7 +435,7 @@ export const Files: React.FC<any> = (props) => {
                                  {opacity: 0.4, pointerEvents: "none"} : {opacity: 1}}
                          onClick={() => {
                              deleteFile().then(() => {
-                                 listDeleteMarkers()
+                                 listDeleteMarkers(true, true)
                              })
                          }}
                     >
@@ -392,9 +491,11 @@ export const Files: React.FC<any> = (props) => {
                         uuid = {uuid}
                         file={item}
                         how={showMethod}
+                        currentSearchPath={currentSearchPath}
                         shiftAddCheckedFile={shiftAddCheckedFile}
                         changeFilePath={changeFilePath}
-                        cauSize={cauSize}/>
+                        cauSize={cauSize}
+                    />
                 })}
             </div>
             <div className="files_info">

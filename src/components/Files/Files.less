@@ -3,10 +3,29 @@
 
 .files_path_icon_theme_color{
   svg{
-    path{
+    .originwhite{
+      fill: #FFFFFF;
+    }
+    .selected{
       fill: @primary-color;
     }
   }
+}
+
+.files_path_icon_theme_color:hover{
+  svg{
+    path{
+      fill: @level3;
+    }
+  }
+}
+
+.files_btn_style{
+  color: @primary-color
+}
+
+.files_btn_style:hover{
+  color: @level3
 }
 
 .files_container{

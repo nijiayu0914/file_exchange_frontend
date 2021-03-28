@@ -8,14 +8,13 @@ export const RecycleBin: React.FC<any> = (props) => {
     const { RecycleBinList, listDeleteMarkers, FileStore } = props
     const restoreFile = (uuid: string, path: string) => {
         FileStore.restoreFile(uuid, path).then(() => {
-            listDeleteMarkers()
+            listDeleteMarkers(true, true)
             message.success("还原成功").then()
         })
     }
     const DeleteFilesForever = (uuid: string, fileNames: string[]) => {
-        console.log(fileNames)
         FileStore.deleteFilesForever(uuid, fileNames).then(() => {
-            listDeleteMarkers()
+            listDeleteMarkers(true, true)
             message.success("删除成功").then()
         })
     }
