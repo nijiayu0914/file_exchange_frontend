@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./Files.less";
 import { REACT_APP_HTTPS } from "../../config"
 import { inject, observer } from "mobx-react";
@@ -32,6 +32,7 @@ export const Files: React.FC<any> = (props) => {
     const [controlClick, setControlClick] = useState<boolean>(false)
     const [historyPath, setHistoryPath] = useState<string[]>([''])
     const [historyPathCursor, setHistoryPathCursor] = useState<number>(0)
+    const uploadComponent = useRef(null)
 
     const copyKeyboardEvent = (e) => {
         if(e.keyCode === 67){
@@ -208,13 +209,17 @@ export const Files: React.FC<any> = (props) => {
         })
         setlookedFile(lookedFile)
     }
-    const downloadFile = async () => {
+    const downloadFile = async (download: boolean = true) => {
         for (const item of currentFileList) {
             if (FileStore.checkedFile.has(item.name)) {
                 const downloadRes = await FileStore.downloadFile(
                     uuid, item.name.replace(uuid + '/', ''))
                 if(downloadRes['code'] === 200){
-                    window.open(downloadRes['data']);
+                    if(download){
+                        window.open(downloadRes['data']);
+                    }else{
+                        return downloadRes['data']
+                    }
                 }else{
                     message.info(item.rename + ",下载失败")
                 }
@@ -333,7 +338,7 @@ export const Files: React.FC<any> = (props) => {
                     </div>
                 </div>
                 <div className="files_path_operator">
-                    <div className="files_path_icon_container">
+                    <div className="files_path_icon_container" ref={uploadComponent}>
                         <Upload
                             name="upload_file"
                             multiple={true}
@@ -405,7 +410,8 @@ export const Files: React.FC<any> = (props) => {
                                 }
                             }}
                             >
-                            <div className="files_path_icon_container files_path_icon_theme_color" style={{height: "100%", paddingTop: "6px"}}>
+                            <div className="files_path_icon_container files_path_icon_theme_color"
+                                 style={{height: "100%", paddingTop: "6px"}}>
                                 <Icon component={UploadIcon} style={{fontSize: 24}}/>
                                 <span>上传</span>
                             </div>
@@ -489,12 +495,20 @@ export const Files: React.FC<any> = (props) => {
                         key={index}
                         listIndex={index}
                         uuid = {uuid}
+                        currentFilePath={currentFilePath}
                         file={item}
                         how={showMethod}
                         currentSearchPath={currentSearchPath}
+                        uploadComponent={uploadComponent}
+                        listFiles={listFiles}
                         shiftAddCheckedFile={shiftAddCheckedFile}
                         changeFilePath={changeFilePath}
                         cauSize={cauSize}
+                        clickLook={clickLook}
+                        createFolderModal={createFolderModal}
+                        downloadFile={downloadFile}
+                        deleteFile={deleteFile}
+                        listDeleteMarkers={listDeleteMarkers}
                     />
                 })}
             </div>

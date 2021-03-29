@@ -280,4 +280,19 @@ export default class FileStore {
             });
         })
     }
+
+    @action Rename(uuid:string, objectName: string, newName: string){
+        return new Promise((resolve, reject)=>{
+            instance.put(API.rename,{
+                "file_uuid": uuid,
+                "object_name": objectName,
+                "new_name": newName
+            }).then(res => {
+                resolve(res)
+            }).catch(error => {
+                message.error("重命名失败").then()
+                reject(error);
+            });
+        })
+    }
 }

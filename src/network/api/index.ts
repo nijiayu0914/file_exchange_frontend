@@ -60,5 +60,11 @@ export const deleteFilesForever = REACT_APP_BASE_URL + "/file/delete_files_forev
 // 还原文件
 export const restoreFile = REACT_APP_BASE_URL + "/file/restore_file"
 
-// 检查用量 check_capacity
+// 检查用量
 export const checkCapacity = REACT_APP_BASE_URL + "/file/check_capacity"
+
+// 重命名
+export const rename = REACT_APP_BASE_URL + "/file/rename_file"
+
+// 删除历史版本
+export const deleteHistoryFile = REACT_APP_BASE_URL + "/file/delete_history_file"

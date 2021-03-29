@@ -1,7 +1,7 @@
-import React from "react";
+import React, {useState} from "react";
 import "./File.less"
 import {inject, observer} from "mobx-react";
-import {Dropdown, Menu} from 'antd';
+import {Dropdown, Input, Menu, Modal, Tag} from 'antd';
 import FileIcon from "../FileIcon/FileIcon";
 import Icon, {SyncOutlined} from "@ant-design/icons";
 import {ReactComponent as Look} from "../../assets/pageicon/Look.svg";
@@ -18,16 +18,81 @@ import {ReactComponent as Delete} from "../../assets/pageicon/Delete.svg";
 
 export const File: React.FC<any> = (props) => {
     const {
-        uuid, listIndex, file, how, currentSearchPath, cauSize,
-        shiftAddCheckedFile, FileStore, changeFilePath } = props
+        uuid, listIndex, file, how, currentSearchPath, currentFilePath, cauSize,
+        shiftAddCheckedFile, FileStore, changeFilePath, uploadComponent,
+        clickLook, createFolderModal, listFiles, downloadFile, deleteFile,
+        listDeleteMarkers } = props
+    const [contextMenuSelected, setContextMenuSelected] = useState<string[]>([])
     const doubleClickFile = () => {
         if(file.category === 'folder'){
             changeFilePath(file.name.replace(uuid + '/', ''))
         }
     }
+    const click = (e) => {
+        e.stopPropagation()
+        if (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) {
+            FileStore.addCheckedFile(file.name, false)
+        }else if(e.shiftKey){
+            shiftAddCheckedFile(listIndex)
+        }else{
+            FileStore.addCheckedFile(file.name)
+        }
+        cauSize()
+    }
+    const renameFile = (uuid: string, objectName: string) => {
+        let newName: string
+        Modal.confirm({
+            title: "重命名？",
+            content: (
+                <div>
+                    <span>文件夹名称:</span>
+                    <Input
+                        onChange={(e) =>{
+                            let FileNameSplit: string[] = file.name.split('.')
+                            newName = e.target.value + '.' + FileNameSplit[FileNameSplit.length - 1]
+                        }}
+                    />
+                </div>
+            ),
+            onOk: () => {
+                FileStore.Rename(uuid, objectName, newName).then(() => {
+                    listFiles(uuid, currentFilePath, true)
+                })
+            },
+        });
+    }
+
+    const historyVersion = () => {
+        FileStore.listFileVersion(
+            uuid, file.name.replace(uuid + '/', '')).then(info => {
+                console.log(info)
+                Modal.confirm({
+                    title: "历史版本",
+                    content: (
+                        <div>
+                            {info.data.map((item, index) => {
+                                return (
+                                    <div key={index} className="file_history">
+                                        <div>{item.lastModified}</div>
+                                        <div>{
+                                            item.isLatest?
+                                                <Tag color="green">最新</Tag>
+                                                :
+                                                <Tag color="volcano">历史</Tag>
+                                        }</div>
+                                        {!item.isLatest? <div><span>回档</span></div> : <div><span></span></div>}
+                                        {!item.isLatest? <div><span>删除</span></div> : <div><span></span></div>}
+                                    </div>
+                                )
+                            })}
+                        </div>)
+            })}
+        )
+    }
     const menu = (
         <Menu
             selectable
+            selectedKeys={contextMenuSelected}
             className="context_menu_icon_theme_color"
             style={{
                 width: "200px",
@@ -36,8 +101,65 @@ export const File: React.FC<any> = (props) => {
                 alignItems: "flex-start",
                 backgroundColor: BasicStyle["@body-background"]
             }}
-            onSelect={(e) => {
-                console.log(e)
+            onSelect={(info) => {
+                switch(info.key){
+                    case "详情":
+                        clickLook()
+                        setContextMenuSelected([])
+                        break
+                    case "重命名":
+                        renameFile(uuid, file.name)
+                        setContextMenuSelected([])
+                        break
+                    case "新建文件夹":
+                        createFolderModal()
+                        setContextMenuSelected([])
+                        break
+                    case "复制":
+                        FileStore.addCopiedFile()
+                        setContextMenuSelected([])
+                        break
+                    case "粘贴":
+                        FileStore.copyFiles(uuid, uuid + '/' + currentFilePath).then(
+                            () => {
+                            listFiles(uuid, currentFilePath, true)
+                        })
+                        setContextMenuSelected([])
+                        break
+                    case "下载":
+                        downloadFile()
+                        setContextMenuSelected([])
+                        break
+                    case "分享":
+                        downloadFile(false).then(res => {
+                            Modal.info({
+                                title: "复制链接地址进行分享:",
+                                content: (
+                                    <textarea
+                                        cols={45} rows={7} style={{border: 0, resize: "none"}}>{res}
+                                    </textarea>)})
+                        })
+                        setContextMenuSelected([])
+                        break
+                    case "上传":
+                        uploadComponent.current.getElementsByTagName("INPUT")[0].click()
+                        setContextMenuSelected([])
+                        break
+                    case "查看历史版本":
+                        historyVersion()
+                        break
+                    case "删除":
+                        deleteFile().then(() => {
+                            listDeleteMarkers(true, true)
+                        })
+                        setContextMenuSelected([])
+                        break
+                    case "刷新":
+                        listFiles(uuid, currentFilePath, true)
+                        break
+                    default:
+                        break
+                }
             }}
 
         >
@@ -50,7 +172,8 @@ export const File: React.FC<any> = (props) => {
             <Menu.Item key="上传" icon={<Icon component={UploadIcon} style={{fontSize: 18}}/>}>上传</Menu.Item>
             <Menu.Item key="下载" icon={<Icon component={Download} style={{fontSize: 18}}/>}>下载</Menu.Item>
             <Menu.Item key="分享" icon={<Icon component={Share} style={{fontSize: 18}}/>}>分享</Menu.Item>
-            <Menu.Item key="回滚" icon={<Icon component={RollBack} style={{fontSize: 18}}/>}>回滚</Menu.Item>
+            <Menu.Item key="查看历史版本" icon={
+                <Icon component={RollBack} style={{fontSize: 18}}/>}>查看历史版本</Menu.Item>
             <Menu.Item key="删除" icon={<Icon component={Delete} style={{fontSize: 18}}/>}>删除</Menu.Item>
             <Menu.Item key="刷新" icon={<SyncOutlined
                 style={{fontSize: 18, color: BasicStyle["@primary-color"]}}/>}>刷新</Menu.Item>
@@ -72,16 +195,11 @@ export const File: React.FC<any> = (props) => {
                     how ?
                         <div className={FileStore.checkedFile.has(file.name)
                             ? "file_detail checked" : "file_detail file_hover"}
-                             onClick={(e) => {
-                                 e.stopPropagation()
-                                 if (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) {
-                                     FileStore.addCheckedFile(file.name, false)
-                                 }else if(e.shiftKey){
-                                     shiftAddCheckedFile(listIndex)
-                                 }else{
-                                     FileStore.addCheckedFile(file.name)
+                             onClick={click}
+                             onMouseDown={(e) =>{
+                                 if(e.button === 2){
+                                     click(e)
                                  }
-                                 cauSize()
                              }}
                              onDoubleClick={() => {doubleClickFile()}}
                         >
