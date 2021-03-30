@@ -40,28 +40,31 @@ export default class UserInfoStore {
         return true
     }
 
-    @action login(callback){
+    @action login(){
         if (!this.check(this.userName, '用户名不能为空')) return
         if (!this.check(this.password, '密码不能为空')) return
-        return instance.post(API.login, {
-            "user_name": this.userName,
-            "password": md5(this.password)
-        }).then(res => {
-            let token = res.data.token
-            localStorage.setItem("UserName", this.userName)
-            localStorage.setItem("Token", token)
-            this.token = token
-            callback()
-        }).catch(err => {
-            if (err.response.status === 401){
-                message.error("用户名或密码错误").then(() => {})
-            }else{
-                message.error(err.response.data.message).then(() => {})
-            }
+        return new Promise((resolve, reject)=>{
+            return instance.post(API.login, {
+                "user_name": this.userName,
+                "password": md5(this.password)
+            }).then(res => {
+                let token = res.data.token
+                localStorage.setItem("UserName", this.userName)
+                localStorage.setItem("Token", token)
+                this.token = token
+                resolve(res)
+            }).catch(error => {
+                if (error.response.status === 401){
+                    message.error("用户名或密码错误").then(() => {})
+                }else{
+                    message.error(error.response.data.message).then(() => {})
+                }
+                reject(error);
+            })
         })
     }
 
-    @action register(callback){
+    @action register(){
         if (!this.check(this.userName, '用户名不能为空')) return
         if (!this.check(this.password, '密码不能为空')) return
         if (!this.check(this.password, '密码不能少于6位', 5)) return
@@ -70,17 +73,20 @@ export default class UserInfoStore {
             message.warn("密码不一致").then(() => {})
             return
         }
-        return instance.post(API.register, {
-            "user_name": this.userName,
-            "password": md5(this.password)
-        }).then(res => {
-            let token = res.data.token
-            localStorage.setItem("UserName", this.userName)
-            localStorage.setItem("Token", token)
-            this.token = token
-            callback()
-        }).catch(err => {
-            message.error(err.response.data.message).then(() => {})
+        return new Promise((resolve, reject)=>{
+            return instance.post(API.register, {
+                "user_name": this.userName,
+                "password": md5(this.password)
+            }).then(res => {
+                let token = res.data.token
+                localStorage.setItem("UserName", this.userName)
+                localStorage.setItem("Token", token)
+                this.token = token
+                resolve(res)
+            }).catch(error => {
+                message.error(error.response.data.message).then(() => {})
+                reject(error);
+            })
         })
     }
 

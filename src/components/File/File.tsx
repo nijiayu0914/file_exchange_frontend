@@ -19,7 +19,7 @@ import {ReactComponent as Delete} from "../../assets/pageicon/Delete.svg";
 export const File: React.FC<any> = (props) => {
     const {
         uuid, listIndex, file, how, currentSearchPath, currentFilePath, cauSize,
-        shiftAddCheckedFile, FileStore, changeFilePath, uploadComponent,
+        shiftAddCheckedFile, LibraryStore, FileStore, changeFilePath, uploadComponent,
         clickLook, createFolderModal, listFiles, downloadFile, deleteFile,
         listDeleteMarkers } = props
     const [contextMenuSelected, setContextMenuSelected] = useState<string[]>([])
@@ -65,27 +65,61 @@ export const File: React.FC<any> = (props) => {
     const historyVersion = () => {
         FileStore.listFileVersion(
             uuid, file.name.replace(uuid + '/', '')).then(info => {
-                console.log(info)
-                Modal.confirm({
+                const model = Modal.confirm({
                     title: "历史版本",
                     content: (
-                        <div>
-                            {info.data.map((item, index) => {
+                        <div className="file_history_container">
+                            {info.data.map((item: HistoryFileProps, index) => {
                                 return (
                                     <div key={index} className="file_history">
-                                        <div>{item.lastModified}</div>
+                                        <div className="file_history_time">
+                                            {new Date(item.lastModified).toLocaleString()}
+                                        </div>
                                         <div>{
                                             item.isLatest?
                                                 <Tag color="green">最新</Tag>
                                                 :
                                                 <Tag color="volcano">历史</Tag>
                                         }</div>
-                                        {!item.isLatest? <div><span>回档</span></div> : <div><span></span></div>}
-                                        {!item.isLatest? <div><span>删除</span></div> : <div><span></span></div>}
+                                        {!item.isLatest?
+                                            <div
+                                                className="file_history_btn"
+                                                onClick={() => {
+                                                    FileStore.copyFile(
+                                                        uuid, item.key, item.key,
+                                                        item.versionId).then(() => {
+                                                        FileStore.listFileVersion(
+                                                            uuid, file.name.replace(uuid + '/', ''))
+                                                        model.destroy()
+                                                    })
+                                                }}
+                                            >
+                                                <Tag color="geekblue">回档</Tag>
+                                            </div> : null}
+                                        {!item.isLatest ?
+                                            <div
+                                                className="file_history_btn"
+                                                onClick={() => {
+                                                    FileStore.deleteHistoryFile(
+                                                        uuid, item.key.replace(
+                                                            uuid + '/', ''),
+                                                        item.versionId
+                                                    ).then(() => {
+                                                        LibraryStore.listLibrary()
+                                                        FileStore.listFileVersion(
+                                                            uuid, file.name.replace(uuid + '/', ''))
+                                                        model.destroy()
+                                                        historyVersion()
+                                                    })
+                                                }}
+                                            >
+                                                <Tag color="magenta">删除</Tag>
+                                            </div> : null}
                                     </div>
                                 )
                             })}
-                        </div>)
+                        </div>
+                    )
             })}
         )
     }
@@ -112,7 +146,7 @@ export const File: React.FC<any> = (props) => {
                         setContextMenuSelected([])
                         break
                     case "新建文件夹":
-                        createFolderModal()
+                        createFolderModal(uuid, currentFilePath)
                         setContextMenuSelected([])
                         break
                     case "复制":
@@ -164,15 +198,17 @@ export const File: React.FC<any> = (props) => {
 
         >
             <Menu.Item key="详情" icon={<Icon component={Look} style={{fontSize: 18}}/>}>文件详情</Menu.Item>
-            <Menu.Item key="重命名" icon={<Icon component={Rename} style={{fontSize: 18}}/>}>重命名</Menu.Item>
+            <Menu.Item disabled={file.category === "folder"} key="重命名" icon={<Icon component={Rename} style={{fontSize: 18}}/>}>重命名</Menu.Item>
             <Menu.Item key="新建文件夹" icon={<Icon component={CreateFolder}
                                                style={{fontSize: 22}}/>}>新建文件夹</Menu.Item>
             <Menu.Item key="复制" icon={<Icon component={Copy} style={{fontSize: 18}}/>}>复制</Menu.Item>
             <Menu.Item key="粘贴" icon={<Icon component={Paste} style={{fontSize: 18}}/>}>粘贴</Menu.Item>
             <Menu.Item key="上传" icon={<Icon component={UploadIcon} style={{fontSize: 18}}/>}>上传</Menu.Item>
-            <Menu.Item key="下载" icon={<Icon component={Download} style={{fontSize: 18}}/>}>下载</Menu.Item>
-            <Menu.Item key="分享" icon={<Icon component={Share} style={{fontSize: 18}}/>}>分享</Menu.Item>
-            <Menu.Item key="查看历史版本" icon={
+            <Menu.Item key="下载" disabled={file.category === "folder"}
+                       icon={<Icon component={Download} style={{fontSize: 18}}/>}>下载</Menu.Item>
+            <Menu.Item key="分享" disabled={file.category === "folder"}
+                       icon={<Icon component={Share} style={{fontSize: 18}}/>}>分享</Menu.Item>
+            <Menu.Item key="查看历史版本" disabled={file.category === "folder"} icon={
                 <Icon component={RollBack} style={{fontSize: 18}}/>}>查看历史版本</Menu.Item>
             <Menu.Item key="删除" icon={<Icon component={Delete} style={{fontSize: 18}}/>}>删除</Menu.Item>
             <Menu.Item key="刷新" icon={<SyncOutlined

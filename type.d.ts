@@ -53,3 +53,12 @@ interface RecycleBinProps {
     lastModified: string,
     versionId: string
 }
+
+interface HistoryFileProps {
+    etag: string,
+    isLatest: boolean,
+    key: string,
+    lastModified: string,
+    size: number,
+    versionId: string
+}

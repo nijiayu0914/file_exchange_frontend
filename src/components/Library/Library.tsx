@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./Library.less"
 import { BasicStyle } from "../../theme/classic"
 import { inject, observer } from "mobx-react";
-import { FolderAddFilled, ExclamationCircleOutlined } from "@ant-design/icons"
+import { FolderAddFilled, ExclamationCircleOutlined, SyncOutlined } from "@ant-design/icons"
 import {Avatar, Dropdown, Input, List, Menu, message, Modal} from 'antd';
 const { Search } = Input;
 
@@ -124,10 +124,17 @@ export const Library: React.FC<any> = ({LibraryStore, FileStore}) => {
                        style={{width: "85%"}}
                        onChange={CreatelibraryNameChange}/>
                 <FolderAddFilled
-                    style={{fontSize: 30, color: BasicStyle["@level4"], cursor: "pointer"}}
+                    style={{fontSize: 30, color: BasicStyle["@level4"],
+                        cursor: "pointer", marginLeft: "5px"}}
                     onClick={() => {
                         createLibrary(libraryName)
                     }}
+                />
+                <SyncOutlined style={{color: BasicStyle["@text-color"],
+                    fontSize: 16, marginLeft: "5px", cursor: "pointer"}}
+                              onClick={() => {
+                                  LibraryStore.listLibrary()
+                              }}
                 />
             </div>
         </div>

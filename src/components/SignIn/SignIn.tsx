@@ -16,7 +16,7 @@ const SignIn: React.FC<any> = ({UserInfoStore}) => {
         UserInfoStore.setPassword(e.target.value)
     }
     const login = () => {
-        UserInfoStore.login(() => {
+        UserInfoStore.login().then(() => {
             history.replace('/repository')
         })
     }

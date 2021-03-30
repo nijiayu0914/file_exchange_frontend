@@ -6,7 +6,7 @@ import {inject, observer} from "mobx-react";
 import { Menu, Dropdown } from 'antd';
 import Icon, { DownOutlined } from '@ant-design/icons';
 
-export const Navigation: React.FC<any> = ({UserInfoStore}) => {
+export const Navigation: React.FC<any> = ({ UserInfoStore, FileStore, LibraryStore }) => {
     const history: useHistory = useHistory();
     const initUser = () => {
         const userName:string | null = localStorage.getItem('UserName')
@@ -23,13 +23,20 @@ export const Navigation: React.FC<any> = ({UserInfoStore}) => {
         UserInfoStore.setToken(token)
     }
     const signOut = () => {
+        LibraryStore.clearLibraryList()
+        LibraryStore.clearShowLibraryList()
+        LibraryStore.clearOpenLibraryList()
+        FileStore.setActiveLibrary('')
         localStorage.removeItem('UserName')
         localStorage.removeItem('Token')
         history.replace('/login')
     }
     const signOutDelToken = () => {
-        UserInfoStore.delToken().then(res => {
-            console.log(res)
+        UserInfoStore.delToken().then(() => {
+            LibraryStore.clearLibraryList()
+            LibraryStore.clearShowLibraryList()
+            LibraryStore.clearOpenLibraryList()
+            FileStore.setActiveLibrary('')
             localStorage.removeItem('UserName')
             localStorage.removeItem('Token')
             history.replace('/login')
@@ -71,4 +78,4 @@ export const Navigation: React.FC<any> = ({UserInfoStore}) => {
     );
 };
 
-export default inject('UserInfoStore')(observer(Navigation));
+export default inject('UserInfoStore', 'LibraryStore', 'FileStore')(observer(Navigation));

@@ -48,11 +48,17 @@ export const deleteFolder = REACT_APP_BASE_URL + "/file/delete_child_file"
 // 列举文件版本
 export const listFileVersion = REACT_APP_BASE_URL + "/file/list_file_version"
 
+// 拷贝文件
+export const copyFile = REACT_APP_BASE_URL + "/file/copy_file"
+
 // 拷贝多个文件
 export const copyFiles = REACT_APP_BASE_URL + "/file/copy_multi_files"
 
 // 列举删除标记
 export const listDeleteMarkers = REACT_APP_BASE_URL + "/file/list_delete_markers"
+
+// 永久删除文件
+export const deleteFileForever = REACT_APP_BASE_URL + "/file/delete_file_forever"
 
 // 永久删除多个文件
 export const deleteFilesForever = REACT_APP_BASE_URL + "/file/delete_files_forever"

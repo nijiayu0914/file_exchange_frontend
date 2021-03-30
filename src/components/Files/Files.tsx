@@ -4,7 +4,7 @@ import { REACT_APP_HTTPS } from "../../config"
 import { inject, observer } from "mobx-react";
 import { BasicStyle } from "../../theme/classic"
 import Icon, { LeftCircleFilled, RightCircleFilled, SyncOutlined } from '@ant-design/icons';
-import { Drawer, Select, Input, message, Modal, Progress, Tooltip, Upload } from "antd";
+import {Drawer, Select, Input, message, Modal, Progress, Tooltip, Upload, Dropdown, Menu} from "antd";
 import OSS from 'ali-oss'
 import { ReactComponent as UploadIcon } from "../../assets/pageicon/Upload.svg";
 import { ReactComponent as Download } from "../../assets/pageicon/Download.svg";
@@ -16,10 +16,11 @@ import { ReactComponent as List } from "../../assets/pageicon/List.svg";
 import { ReactComponent as View } from "../../assets/pageicon/View.svg";
 import { ReactComponent as Folder } from "../../assets/fileicon/File.svg";
 import File from "../File/File"
+import {ReactComponent as Paste} from "../../assets/pageicon/Paste.svg";
 const { Option } = Select;
 
 export const Files: React.FC<any> = (props) => {
-    const { uuid, libraryName, BinChange, listDeleteMarkers, FileStore } = props
+    const { uuid, libraryName, BinChange, listDeleteMarkers, LibraryStore, FileStore } = props
     const [isInit, setIsInit] = useState<boolean>(true)
     const [currentFilePath, setCurrentFilePath] = useState<string>('')
     const [currentSearchPath, setCurrentSearchPath] = useState<string>('')
@@ -32,6 +33,7 @@ export const Files: React.FC<any> = (props) => {
     const [controlClick, setControlClick] = useState<boolean>(false)
     const [historyPath, setHistoryPath] = useState<string[]>([''])
     const [historyPathCursor, setHistoryPathCursor] = useState<number>(0)
+    const [contextMenuSelected, setContextMenuSelected] = useState<string[]>([])
     const uploadComponent = useRef(null)
 
     const copyKeyboardEvent = (e) => {
@@ -277,6 +279,56 @@ export const Files: React.FC<any> = (props) => {
             setControlClick(false)
         }
     }, []);
+    const menu = (
+        <Menu
+            selectable
+            selectedKeys={contextMenuSelected}
+            className="context_menu_icon_theme_color"
+            style={
+                FileStore.checkedFile.size === 0 ?
+                {
+                width: "200px",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+                backgroundColor: BasicStyle["@body-background"]
+                } : {display: 'none'}
+            }
+            onSelect={(info) => {
+                switch(info.key){
+                    case "新建文件夹":
+                        createFolderModal(uuid, currentFilePath)
+                        setContextMenuSelected([])
+                        break
+                    case "粘贴":
+                        FileStore.copyFiles(uuid, uuid + '/' + currentFilePath).then(
+                            () => {
+                                listFiles(uuid, currentFilePath, true)
+                            })
+                        setContextMenuSelected([])
+                        break
+                    case "上传":
+                        // @ts-ignore
+                        uploadComponent.current.getElementsByTagName("INPUT")[0].click()
+                        setContextMenuSelected([])
+                        break
+                    case "刷新":
+                        listFiles(uuid, currentFilePath, true)
+                        break
+                    default:
+                        break
+                }
+            }}
+
+        >
+            <Menu.Item key="新建文件夹" icon={<Icon component={CreateFolder}
+                                               style={{fontSize: 22}}/>}>新建文件夹</Menu.Item>
+            <Menu.Item key="粘贴" icon={<Icon component={Paste} style={{fontSize: 18}}/>}>粘贴</Menu.Item>
+            <Menu.Item key="上传" icon={<Icon component={UploadIcon} style={{fontSize: 18}}/>}>上传</Menu.Item>
+            <Menu.Item key="刷新" icon={<SyncOutlined
+                style={{fontSize: 18, color: BasicStyle["@primary-color"]}}/>}>刷新</Menu.Item>
+        </Menu>
+    );
     return (
         <div className="files_container">
             <div className="files_path">
@@ -405,6 +457,7 @@ export const Files: React.FC<any> = (props) => {
                                                 setUploadProgress(0)
                                     })
                                     listFiles(uuid, currentFilePath, true)
+                                    LibraryStore.listLibrary()
                                 }else{
                                     message.error("上传失败")
                                 }
@@ -484,34 +537,43 @@ export const Files: React.FC<any> = (props) => {
                         )}
                 </div>
             </div>
-            <div
-                className="files_show"
-                onClick={() => {
-                    FileStore.clearCheckedFile()
-                    cauSize()
-                }}>
-                {currentFileList.map((item, index) => {
-                    return <File
-                        key={index}
-                        listIndex={index}
-                        uuid = {uuid}
-                        currentFilePath={currentFilePath}
-                        file={item}
-                        how={showMethod}
-                        currentSearchPath={currentSearchPath}
-                        uploadComponent={uploadComponent}
-                        listFiles={listFiles}
-                        shiftAddCheckedFile={shiftAddCheckedFile}
-                        changeFilePath={changeFilePath}
-                        cauSize={cauSize}
-                        clickLook={clickLook}
-                        createFolderModal={createFolderModal}
-                        downloadFile={downloadFile}
-                        deleteFile={deleteFile}
-                        listDeleteMarkers={listDeleteMarkers}
-                    />
-                })}
-            </div>
+            <Dropdown overlay={menu} trigger={['contextMenu']}>
+                <div
+                    className="files_show"
+                    onClick={() => {
+                        FileStore.clearCheckedFile()
+                        cauSize()
+                    }}
+                    onMouseDown={(e) => {
+                        if(e.button === 2){
+                            FileStore.clearCheckedFile()
+                            cauSize()
+                        }
+                    }}
+                >
+                    {currentFileList.map((item, index) => {
+                        return <File
+                            key={index}
+                            listIndex={index}
+                            uuid = {uuid}
+                            currentFilePath={currentFilePath}
+                            file={item}
+                            how={showMethod}
+                            currentSearchPath={currentSearchPath}
+                            uploadComponent={uploadComponent}
+                            listFiles={listFiles}
+                            shiftAddCheckedFile={shiftAddCheckedFile}
+                            changeFilePath={changeFilePath}
+                            cauSize={cauSize}
+                            clickLook={clickLook}
+                            createFolderModal={createFolderModal}
+                            downloadFile={downloadFile}
+                            deleteFile={deleteFile}
+                            listDeleteMarkers={listDeleteMarkers}
+                        />
+                    })}
+                </div>
+            </Dropdown>
             <div className="files_info">
                 <div><span>选中文件:</span><span>{FileStore.checkedFile.size}</span><span>个</span></div>
                 <div><span>总大小:</span><span>{checkedSize}</span></div>
@@ -589,4 +651,4 @@ export const Files: React.FC<any> = (props) => {
     );
 }
 
-export default inject('FileStore')(observer(Files))
+export default inject('LibraryStore', 'FileStore')(observer(Files))

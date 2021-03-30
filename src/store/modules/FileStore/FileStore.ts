@@ -199,6 +199,24 @@ export default class FileStore {
         })
     }
 
+    @action copyFile(uuid: string, origin: string,
+                     dest: string, versionId: string) {
+        let copyFile: CopyFileProps = {
+            "file_uuid": uuid,
+            "origin_file": origin,
+            "dest_file": dest,
+            "versionid": versionId
+        }
+        return new Promise((resolve, reject)=>{
+            instance.post(API.copyFile, copyFile).then(res => {
+                resolve(res)
+            }).catch(error => {
+                message.error("拷贝失败").then()
+                reject(error);
+            });
+        })
+    }
+
     @action async copyFiles(uuid: string, dest: string) {
         let copyList: MultiCopyFileProps = {file_uuid: uuid, copy_list: []}
         for (const item of this.copiedFile) {
@@ -267,6 +285,22 @@ export default class FileStore {
         })
     }
 
+    @action deleteFileForever(uuid: string, fileName: string){
+        return new Promise((resolve, reject)=>{
+            instance.delete(API.deleteFileForever, {
+                params: {
+                    "uuid": uuid,
+                    "file_name": fileName
+                }
+            }).then(res => {
+                resolve(res)
+            }).catch(error => {
+                message.error("删除失败").then()
+                reject(error);
+            });
+        })
+    }
+
     @action deleteFilesForever(uuid: string, fileNames: string[]){
         return new Promise((resolve, reject)=>{
             instance.post(API.deleteFilesForever, {
@@ -291,6 +325,21 @@ export default class FileStore {
                 resolve(res)
             }).catch(error => {
                 message.error("重命名失败").then()
+                reject(error);
+            });
+        })
+    }
+
+    @action deleteHistoryFile(uuid: string, path: string, versionId: string){
+        return new Promise((resolve, reject)=>{
+            instance.post(API.deleteHistoryFile, {
+                "file_uuid": uuid,
+                "path": path,
+                "version_id": versionId
+            }).then(res => {
+                resolve(res)
+            }).catch(error => {
+                message.error("删除失败").then()
                 reject(error);
             });
         })

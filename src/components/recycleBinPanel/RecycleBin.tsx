@@ -5,7 +5,7 @@ import { BasicStyle } from "../../theme/classic"
 import { message, Tag, Tooltip} from "antd";
 
 export const RecycleBin: React.FC<any> = (props) => {
-    const { RecycleBinList, listDeleteMarkers, FileStore } = props
+    const { RecycleBinList, listDeleteMarkers, LibraryStore, FileStore } = props
     const restoreFile = (uuid: string, path: string) => {
         FileStore.restoreFile(uuid, path).then(() => {
             listDeleteMarkers(true, true)
@@ -14,6 +14,7 @@ export const RecycleBin: React.FC<any> = (props) => {
     }
     const DeleteFilesForever = (uuid: string, fileNames: string[]) => {
         FileStore.deleteFilesForever(uuid, fileNames).then(() => {
+            LibraryStore.listLibrary()
             listDeleteMarkers(true, true)
             message.success("删除成功").then()
         })
@@ -53,4 +54,4 @@ export const RecycleBin: React.FC<any> = (props) => {
     )
 }
 
-export default inject('FileStore')(observer(RecycleBin))
+export default inject('LibraryStore', 'FileStore')(observer(RecycleBin))
