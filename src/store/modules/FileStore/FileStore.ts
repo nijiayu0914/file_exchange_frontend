@@ -14,8 +14,14 @@ export default class FileStore {
 
     @observable copiedFile: string[] = []
 
+    @observable currentStatisticData: object = {}
+
     @action setActiveLibrary(uuid: string){
         this.activeLibrary = uuid
+    }
+
+    @action addCurrentStatisticData(uuid: string, folderCount: number, fileCount: number){
+        this.currentStatisticData[uuid] = [folderCount, fileCount]
     }
 
     @action addCheckedFile(name: string, isClear: boolean = true, isShift: boolean = false){

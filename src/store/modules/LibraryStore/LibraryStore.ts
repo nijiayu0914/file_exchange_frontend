@@ -119,4 +119,17 @@ export default class LibraryStore {
             });
         })
     }
+
+    @action readAllFilesSize(uuid: string){
+        return new Promise((resolve, reject)=>{
+            instance.get(API.readAllFilesSize, {
+                params:{"uuid": uuid}
+            }).then(res => {
+                resolve(res)
+            }).catch(error => {
+                message.error("读取失败").then()
+                reject(error);
+            });
+        })
+    }
 }

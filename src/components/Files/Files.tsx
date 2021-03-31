@@ -101,6 +101,8 @@ export const Files: React.FC<any> = (props) => {
             const data: object = res.data
             let dirs: object[] = data["dirs"] ? data["dirs"] : []
             let files: object[] = data["files"] ? data["files"] : []
+            let folderCount: number = 0
+            let fileCount: number = 0
             let collectionData = dirs.concat(files)
             let currentFiles: FileProps[] = []
             for(let i = 0; i < collectionData.length; i++){
@@ -115,6 +117,7 @@ export const Files: React.FC<any> = (props) => {
                     file['size'] = 0
                     file['category'] = 'folder'
                     file['suffix'] = ''
+                    folderCount += 1
                 }else if(collectionData[i]['meta']['X-Oss-Meta-Category'] &&
                     collectionData[i]['meta']['X-Oss-Meta-Category'][0] === 'file'){
                     file['name'] = collectionData[i]['basic']['Key']
@@ -122,11 +125,13 @@ export const Files: React.FC<any> = (props) => {
                     file['category'] = 'file'
                     const fileNameSplit = collectionData[i]['meta']['X-Oss-Meta-Origin-Name'][0].split('.')
                     file['suffix'] = decodeURIComponent(fileNameSplit[fileNameSplit.length - 1]).toLowerCase()
+                    fileCount += 1
                 }else if(!collectionData[i]['meta']['X-Oss-Meta-Category']){
                     file['name'] = collectionData[i]['basic']
                     file['size'] = 0
                     file['category'] = 'folder'
                     file['suffix'] = ''
+                    folderCount += 1
                 }else{
                     continue
                 }
@@ -147,6 +152,14 @@ export const Files: React.FC<any> = (props) => {
                 }
             }
             setCurrentFileList(currentFiles)
+            if(currentFilePath.indexOf('/') !== -1){
+                folderCount -= 1
+            }
+            if(folderCount < 0){
+                folderCount = 0
+            }
+            FileStore.addCurrentStatisticData(
+                uuid, folderCount || 0, fileCount || 0)
             setTimeout(() => {
                 setControlClick(false)
             }, 5000)

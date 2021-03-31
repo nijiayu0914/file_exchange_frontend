@@ -74,3 +74,6 @@ export const rename = REACT_APP_BASE_URL + "/file/rename_file"
 
 // 删除历史版本
 export const deleteHistoryFile = REACT_APP_BASE_URL + "/file/delete_history_file"
+
+// 读取所有文件大小
+export const readAllFilesSize = REACT_APP_BASE_URL + "/file/read_all_files_size"
