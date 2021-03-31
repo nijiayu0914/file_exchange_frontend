@@ -652,9 +652,11 @@ export const Files: React.FC<any> = (props) => {
                         </div>
                         <div className="files_look_row">
                             <span className="files_look_tag">最新修改时间:</span>
-                            <Tooltip title={item.modifyTime} placement="topLeft"
+                            <Tooltip title={
+                                new Date(item.modifyTime).toLocaleString()} placement="topLeft"
                                      color={BasicStyle["@level5"]}>
-                                <span className="files_look_content">{item.modifyTime}</span>
+                                <span className="files_look_content">{
+                                    new Date(item.modifyTime).toLocaleString()}</span>
                             </Tooltip>
                         </div>
                     </div>
