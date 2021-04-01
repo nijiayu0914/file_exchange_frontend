@@ -4,7 +4,7 @@ import './index.less';
 import reportWebVitals from './reportWebVitals';
 import { Provider } from 'mobx-react';
 import store from './store/store';
-import { HashRouter, Route, Switch } from "react-router-dom";
+import { HashRouter, Route, Switch,  } from "react-router-dom";
 import { Login } from "./pages/Login/Login"
 import { Repository } from "./pages/Repository/Repository"
 

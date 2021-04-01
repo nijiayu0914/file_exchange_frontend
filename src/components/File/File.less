@@ -8,14 +8,21 @@
   display: flex;
   justify-content: space-between;
   flex-direction: column;
+  .checked{
+    background-color: @level2;
+  }
+  .file_hover:hover{
+    background-color: @level1;
+  }
   .file_detail{
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     flex-direction: column;
     align-items: center;
+    height: 100px;
     .file_name{
       width: 100px;
-      height: 36px;
+      height: 16px;
       display: flex;
       justify-content: space-around;
       align-items: center;
@@ -35,13 +42,22 @@
 .file_container_list{
   width: 100%;
   height: 35px;
-  margin: 5px 0 0 15px;
+  margin: 5px 0 0 0;
+  .checked{
+    background-color: @level2;
+  }
+  .file_hover:hover{
+    background-color: @level1;
+  }
   .file_detail{
     display: flex;
     align-items: center;
     .file_normal{
       font-size: 14px;
       margin-right: 20px;
+    }
+    .file_icon{
+      margin-left: 15px;
     }
     .file_name{
       width: 300px;
@@ -65,10 +81,28 @@
       -o-text-overflow: ellipsis;
     }
     .file_modifytime{
-      width: 300px;overflow: hidden;
+      width: 300px;
+      overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
       -o-text-overflow: ellipsis;
+    }
+  }
+}
+
+.file_history_container{
+  width: 100%;
+  height: 300px;
+  overflow: auto;
+  .file_history{
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 10px;
+    .file_history_time{
+      width: 70%;
+    }
+    .file_history_btn{
+      cursor: pointer;
     }
   }
 }

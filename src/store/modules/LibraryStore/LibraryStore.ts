@@ -24,6 +24,18 @@ export default class LibraryStore {
         this.showLibraryList = newList.slice(0)
     }
 
+    @action clearLibraryList(){
+        this.libraryList = []
+    }
+
+    @action clearShowLibraryList(){
+        this.showLibraryList = []
+    }
+
+    @action clearOpenLibraryList(){
+        this.openLibraryList = []
+    }
+
     @action openLibrary(uuid: string, libraryName: string){
         let listLen = this.openLibraryList.length
         for(let i = 0; i < listLen; i++){
@@ -61,10 +73,10 @@ export default class LibraryStore {
     }
 
     @action listLibrary(){
-        return new Promise((resolve,reject)=>{
+        return new Promise((resolve, reject)=>{
             instance.get(API.listLibrary).then(res => {
-                this.libraryList = res.data
-                this.showLibraryList = res.data
+                this.libraryList = res.data || []
+                this.showLibraryList = res.data || []
                 resolve(res)
             }).catch(error => {
                 message.error("查询失败").then()
@@ -74,7 +86,7 @@ export default class LibraryStore {
     }
 
     @action renameLibrary(uuid: string, newName: string){
-        return new Promise((resolve,reject)=>{
+        return new Promise((resolve, reject)=>{
             instance.get(API.changeLibraryName, {
                 params:{
                     "uuid": uuid,
@@ -93,7 +105,7 @@ export default class LibraryStore {
     }
 
     @action deleteLibrary(uuid: string){
-        return new Promise((resolve,reject)=>{
+        return new Promise((resolve, reject)=>{
             instance.get(API.deleteLibrary, {
                 params:{"uuid": uuid}
             }).then(res => {
@@ -103,6 +115,19 @@ export default class LibraryStore {
                 resolve(res)
             }).catch(error => {
                 message.error("删除失败").then()
+                reject(error);
+            });
+        })
+    }
+
+    @action readAllFilesSize(uuid: string){
+        return new Promise((resolve, reject)=>{
+            instance.get(API.readAllFilesSize, {
+                params:{"uuid": uuid}
+            }).then(res => {
+                resolve(res)
+            }).catch(error => {
+                message.error("读取失败").then()
                 reject(error);
             });
         })

@@ -4,11 +4,13 @@ import { inject, observer } from "mobx-react";
 import { Tabs } from "antd";
 import { FolderAddFilled } from "@ant-design/icons";
 import FinderContainer from "../FinderContainer/FinderContainer";
+import CurrentStatistic from "../CurrentStatistic/CurrentStatistic";
 const { TabPane } = Tabs;
 
 export const Finder: React.FC<any> = ({ LibraryStore, FileStore }) => {
     const triggerLibrary = (uuid: string) => {
         FileStore.setActiveLibrary(uuid)
+        FileStore.clearCheckedFile()
     }
     const closeLibrary = (uuid: string) => {
         LibraryStore.closeLibrary(uuid)
@@ -17,9 +19,12 @@ export const Finder: React.FC<any> = ({ LibraryStore, FileStore }) => {
             && FileStore.setActiveLibrary(LibraryStore.openLibraryList[0][0])
         }
     }
+
     return (
         <div className="finder_container">
-            <div className="finder_index"/>
+            <div className="finder_index">
+                <CurrentStatistic/>
+            </div>
             <div className="finder_main">
                 <Tabs
                     type="editable-card"
@@ -50,9 +55,8 @@ export const Finder: React.FC<any> = ({ LibraryStore, FileStore }) => {
                     ))}
                 </Tabs>
             </div>
-
         </div>
-    );
-};
+    )
+}
 
 export default inject('LibraryStore', 'FileStore')(observer(Finder));

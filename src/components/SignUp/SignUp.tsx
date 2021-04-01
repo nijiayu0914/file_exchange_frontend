@@ -18,7 +18,7 @@ const SignUp: React.FC<any> = ({UserInfoStore}) => {
         UserInfoStore.setPasswordAgain(e.target.value)
     }
     const register = () => {
-        UserInfoStore.register(() => {
+        UserInfoStore.register().then(() => {
             history.replace('/repository')
         })
     }
