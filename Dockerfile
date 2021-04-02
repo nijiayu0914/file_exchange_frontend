@@ -29,9 +29,9 @@ RUN rm /etc/nginx/conf.d/default.conf
 RUN rm /etc/nginx/nginx.conf
 WORKDIR '/etc/nginx'
 
-RUN wget http://192.168.0.130/file_exchange/prod/nginx.conf \
-    && wget http://192.168.0.130/file_exchange/prod/ssl/portal.happyworkhardlife.com.key \
-    && wget http://192.168.0.130/file_exchange/prod/ssl/portal.happyworkhardlife.com.pem \
-    && wget http://192.168.0.130/file_exchange/prod/ssl/www.portal.happyworkhardlife.com.key \
-    && wget http://192.168.0.130/file_exchange/prod/ssl/www.portal.happyworkhardlife.com.pem
+RUN wget http://192.168.0.130:7000/file_exchange/prod/nginx.conf \
+    && wget http://192.168.0.130:7000/file_exchange/prod/ssl/portal.happyworkhardlife.com.key \
+    && wget http://192.168.0.130:7000/file_exchange/prod/ssl/portal.happyworkhardlife.com.pem \
+    && wget http://192.168.0.130:7000/file_exchange/prod/ssl/www.portal.happyworkhardlife.com.key \
+    && wget http://192.168.0.130:7000/file_exchange/prod/ssl/www.portal.happyworkhardlife.com.pem
 WORKDIR '/'
