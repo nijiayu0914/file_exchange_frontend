@@ -42,7 +42,8 @@
     "start": "dotenv -e env/env.dev craco start",
     "build": "set GENERATE_SOURCEMAP=false && dotenv -e env/env.prod craco build",
     "test": "craco test",
-    "eject": "craco eject"
+    "eject": "craco eject",
+    "bundle-report": "webpack-bundle-analyzer --port 8123 dist/stats.json"
   },
   "eslintConfig": {
     "extends": [

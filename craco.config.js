@@ -20,7 +20,14 @@ module.exports = {
             '@components': pathResolve('src/components')
         },
         plugins: [
-            //new BundleAnalyzerPlugin(),
+            new BundleAnalyzerPlugin(
+                {
+                    analyzerMode: 'disabled',
+                    generateStatsFile: true,
+                    statsOptions: { source: false }
+                }
+            ),
+            process.env.NODE_ENV === "production" ?
             new UglifyJsPlugin({
                 uglifyOptions: {
                     compress: {
@@ -31,7 +38,7 @@ module.exports = {
                 },
                 sourceMap: false,
                 parallel: true,
-            }),
+            }) : () => {},
             // 打压缩包
             new CompressionWebpackPlugin({
                 algorithm: 'gzip',
@@ -46,7 +53,7 @@ module.exports = {
                 cacheGroups: {
                     commons: {
                         chunks: 'initial',
-                        minChunks: 2,
+                        minChunks: 1,
                         maxInitialRequests: 5,
                         minSize: 0
                     },
