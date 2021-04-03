@@ -441,8 +441,8 @@ export const Files: React.FC<any> = (props) => {
                                     message.warning("已超限额，无法上传")
                                     return
                                 }
-                                 const sts = await FileStore.createSTS()
-                                 const ossClientParams: AliyunSTSProps = sts.data
+                                const sts = await FileStore.createSTS()
+                                const ossClientParams: AliyunSTSProps = sts.data
                                 ossClientParams['secure'] = REACT_APP_HTTPS ? JSON.parse(REACT_APP_HTTPS) : false
 
                                 let client = new OSS(ossClientParams)
