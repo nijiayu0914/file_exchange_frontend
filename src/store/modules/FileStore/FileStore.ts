@@ -60,6 +60,23 @@ export default class FileStore {
         })
     }
 
+    @action readAllFiles(page: number = 1, pageSize: number = 10,
+                           keyWord: string = ''){
+        return new Promise((resolve, reject)=>{
+            instance.get(API.filesAll, {
+                params:{
+                    "page": page,
+                    "page_size": pageSize,
+                    "key_word": keyWord
+                }
+            }).then(res => {
+                resolve(res)
+            }).catch(error => {
+                reject(error);
+            });
+        })
+    }
+
     @action createFolder(uuid: string, fileName: string){
         return new Promise((resolve, reject)=>{
             instance.get(API.createFolder, {
@@ -115,6 +132,23 @@ export default class FileStore {
                 "file_uuid": uuid,
                 "usage_capacity": usageCapacity,
                 "how": how,
+            }).then(res => {
+                resolve(res)
+                runInAction(() => {
+
+                })
+            }).catch(error => {
+                message.error("更新失败").then()
+                reject(error);
+            });
+        })
+    }
+
+    @action updateCapacity(uuid: string, capacity: number){
+        return new Promise((resolve, reject)=>{
+            instance.put(API.updateCapacity, {
+                "file_uuid": uuid,
+                "capacity": capacity,
             }).then(res => {
                 resolve(res)
                 runInAction(() => {
@@ -239,14 +273,16 @@ export default class FileStore {
             }
             const fileVersions: any = await this.listFileVersion(
                 fileUuid, item.replace(fileUuid + '/', ''))
-            let versionId: string = fileVersions['data'][0]['versionId']
-            let copyFile: CopyFileProps = {
-                "file_uuid": uuid,
-                "origin_file": item,
-                "dest_file": dest + name,
-                "versionid": versionId
+            if(fileVersions['data']){
+                let versionId: string = fileVersions['data'][0]['versionId']
+                let copyFile: CopyFileProps = {
+                    "file_uuid": uuid,
+                    "origin_file": item,
+                    "dest_file": dest + name,
+                    "versionid": versionId
+                }
+                copyList['copy_list'].push(copyFile)
             }
-            copyList['copy_list'].push(copyFile)
         }
         return new Promise((resolve, reject)=>{
             instance.post(API.copyFiles, copyList).then(res => {

@@ -1,4 +1,4 @@
-import { makeAutoObservable, observable, action } from 'mobx';
+import {makeAutoObservable, observable, action, runInAction} from 'mobx';
 import instance from "../../../network/axios/instance";
 import * as API from "../../../network/api";
 import md5 from "js-md5";
@@ -8,13 +8,19 @@ export default class UserInfoStore {
     constructor() {
         makeAutoObservable(this);
     }
-    @observable userName: string='';
+    @observable userName: string = '';
 
-    @observable password: string='';
+    @observable password: string = '';
 
-    @observable passwordAgain: string='';
+    @observable passwordAgain: string = '';
 
-    @observable token: string='';
+    @observable token: string = '';
+
+    @observable maxLibrary: number = 0;
+
+    @observable permission: number = 0;
+
+    @observable adminName: string = "";
 
     @action setUserName(userName: string){
         this.userName = userName
@@ -52,12 +58,17 @@ export default class UserInfoStore {
                 localStorage.setItem("UserName", this.userName)
                 localStorage.setItem("Token", token)
                 this.token = token
+                runInAction(() => {
+                    this.readPlugin().then().catch(err => {
+                        message.error("配置信息读取失败").then()
+                    })
+                })
                 resolve(res)
             }).catch(error => {
                 if (error.response.status === 401){
-                    message.error("用户名或密码错误").then(() => {})
+                    message.error("用户名或密码错误").then()
                 }else{
-                    message.error(error.response.data.message).then(() => {})
+                    message.error(error.response.data.message).then()
                 }
                 reject(error);
             })
@@ -82,6 +93,11 @@ export default class UserInfoStore {
                 localStorage.setItem("UserName", this.userName)
                 localStorage.setItem("Token", token)
                 this.token = token
+                runInAction(() => {
+                    this.readPlugin().then().catch(err => {
+                        message.error("配置信息读取失败").then()
+                    })
+                })
                 resolve(res)
             }).catch(error => {
                 message.error(error.response.data.message).then(() => {})
@@ -95,6 +111,67 @@ export default class UserInfoStore {
             instance.delete(API.delToken).then(res => {
                 resolve(res)
             }).catch(error => {
+                reject(error);
+            });
+        })
+    }
+
+    @action readPlugin(){
+        return new Promise((resolve, reject)=>{
+            instance.get(API.userPlugin).then(res => {
+                runInAction(() => {
+                    let data = res.data
+                    this.adminName = data["admin_name"]
+                    this.maxLibrary = data["user_plugin"]['max_library']
+                    this.permission = data["user_plugin"]['permission']
+                })
+                resolve(res)
+            }).catch(error => {
+                reject(error);
+            });
+        })
+    }
+
+    @action readAllPlugins(page: number = 1, pageSize: number = 10,
+                           keyWord: string = ''){
+        return new Promise((resolve, reject)=>{
+            instance.get(API.userPluginsAll, {
+                params:{
+                    "page": page,
+                    "page_size": pageSize,
+                    "key_word": keyWord
+                }
+            }).then(res => {
+                resolve(res)
+            }).catch(error => {
+                reject(error);
+            });
+        })
+    }
+
+    @action updatePermission(userName: string, permission: number){
+        return new Promise((resolve,reject)=>{
+            instance.put(API.updatePermission, {
+                "user_name": userName,
+                "permission": permission
+            }).then(res => {
+                resolve(res)
+            }).catch(error => {
+                message.error("更新失败").then()
+                reject(error);
+            });
+        })
+    }
+
+    @action updateMaxLibrary(userName: string, maxLibrary: number){
+        return new Promise((resolve,reject)=>{
+            instance.put(API.updateMaxLibraryCapacity, {
+                "user_name": userName,
+                "max_library": maxLibrary
+            }).then(res => {
+                resolve(res)
+            }).catch(error => {
+                message.error("更新失败").then()
                 reject(error);
             });
         })

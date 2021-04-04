@@ -47,25 +47,49 @@ module.exports = {
                 minRatio: 1
             })
         ],
-        //抽离公用模块
-        optimization: {
-            splitChunks: {
+        configure: (webpackConfig, {
+            env, paths
+        }) => {
+            webpackConfig.context = path.resolve('./src')
+            webpackConfig.entry = {"main": "./index.tsx"}
+            webpackConfig.optimization.splitChunks = {
+                minChunks: 1,
+                maxAsyncRequests: 6,
+                maxInitialRequests: 6,
+                automaticNameDelimiter: '~',
                 cacheGroups: {
+                    basic: {
+                        test: /(react|react-dom|react-dom-router|babel-polyfill|mobx)/,
+                        chunks: 'all',
+                        priority: 100,
+                    },
+                    antd: {
+                        test: /[\\/]antd[\\/]/,
+                        chunks: 'all',
+                        priority: 90
+                    },
+                    oss: {
+                        test: /[\\/]ali-oss[\\/]/,
+                        chunks: 'all',
+                        priority: 80
+                    },
                     commons: {
-                        chunks: 'initial',
-                        minChunks: 1,
-                        maxInitialRequests: 5,
-                        minSize: 0
+                        chunks: 'all',
+                        priority: 70,
+                        reuseExistingChunk: true,
+
                     },
                     vendor: {
-                        test: /node_modules/,
-                        chunks: 'initial',
+                        test: /[\\/]node_modules[\\/]/,
+                        chunks: 'all',
                         name: 'vendor',
                         priority: 10,
-                        enforce: true
+                        enforce: true,
+                        reuseExistingChunk: true,
                     }
                 }
             }
+            return webpackConfig
         }
     },
     devServer: {

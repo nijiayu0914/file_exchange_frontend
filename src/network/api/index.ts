@@ -9,6 +9,21 @@ export const register = REACT_APP_BASE_URL + "/user/create"
 // 删除登录状态缓存
 export const delToken = REACT_APP_BASE_URL + "/user/deltoken"
 
+// 获取用户配置
+export const userPlugin = REACT_APP_BASE_URL + "/user_plugin/read"
+
+// 获取所有用户配置
+export const userPluginsAll = REACT_APP_BASE_URL + "/user_plugin/read_all"
+
+// 获取所有文件夹
+export const filesAll = REACT_APP_BASE_URL + "/user_plugin/read_files"
+
+// 更新用户权限
+export const updatePermission = REACT_APP_BASE_URL + "/user_plugin/update_permission"
+
+// 更新用户Library数量
+export const updateMaxLibraryCapacity = REACT_APP_BASE_URL + "/user_plugin/update_library"
+
 // 创建library
 export const createLibrary = REACT_APP_BASE_URL + "/file/create_library"
 
@@ -35,6 +50,9 @@ export const getGrant = REACT_APP_BASE_URL + "/file/grant"
 
 // 更新用量
 export const updateUsage = REACT_APP_BASE_URL + "/file/update_usage"
+
+// 更新总用量
+export const updateCapacity = REACT_APP_BASE_URL + "/file/update_capacity"
 
 // 下载文件
 export const downloadFile = REACT_APP_BASE_URL + "/file/download"
