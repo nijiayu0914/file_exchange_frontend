@@ -19,7 +19,8 @@ instance.interceptors.response.use((response) => {
 }, (error) => {
     if(String(error).indexOf('timeout')>=0) return Promise.reject({msg: "请求超时！"});
     if(error.response.status===403 && error.response.data.message==='token验证失败'){
-        window.location.replace(window.location.origin + '/' + window.location.hash + 'login')
+        // eslint-disable-next-line
+        window.location.replace(window.location.origin + '/#/' + 'login')
         return Promise.reject({msg: "token验证失败"});
     }
     return Promise.reject(error);

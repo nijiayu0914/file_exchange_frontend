@@ -13,6 +13,25 @@ export const RecycleBin: React.FC<any> = (props) => {
         })
     }
     const DeleteFilesForever = (uuid: string, fileNames: string[]) => {
+        for(let i = 0; i < fileNames.length; i ++){
+            let key: string = fileNames[i]
+            if(key[key.length - 1] === '/'){
+                let keySplit: string[] = key.split('/')
+                let keyWord: string = keySplit[keySplit.length - 2]
+                for(let j = 0; j < RecycleBinList.length; j ++){
+                    let item: RecycleBinProps = RecycleBinList[j]
+                    if(item.key.replace(
+                        item.uuid + '/', '') === key){
+                        continue
+                    }
+                    if(item.key.indexOf(keyWord) !== -1){
+                        message.warn(
+                            "请先删除文件夹中的文件，再删除文件夹", 3).then()
+                        return
+                    }
+                }
+            }
+        }
         FileStore.deleteFilesForever(uuid, fileNames).then(() => {
             LibraryStore.listLibrary()
             listDeleteMarkers(true, true)
@@ -30,7 +49,7 @@ export const RecycleBin: React.FC<any> = (props) => {
                             <Tag color="volcano">History</Tag>
                         }
                         <Tooltip title={
-                            "删除日期:" + item.lastModified
+                            "文件名:" + item.showName
                         } placement="topLeft"
                                  color={BasicStyle["@level5"]}>
                             <span className="recycle_bin_panel_collapse_content">{item.showName}</span>

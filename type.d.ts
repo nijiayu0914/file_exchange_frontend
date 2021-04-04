@@ -62,3 +62,40 @@ interface HistoryFileProps {
     size: number,
     versionId: string
 }
+
+interface UserPluginProps {
+    key: string,
+    userName: string,
+    permissionCode: number,
+    permission: string,
+    maxLibrary: string,
+    createTime: string,
+    updateTime: string
+}
+
+interface UserPluginsReadProps {
+    count: number,
+    keyWord: string,
+    page: number,
+    page_size: number,
+    user_plugins: UserPluginProps[]
+}
+
+interface FileTableProps {
+    key: string,
+    userName: string,
+    fileName: string,
+    uuid: string,
+    usageCapacity: number,
+    capacity: number,
+    createTime: string,
+    updateTime: string
+}
+
+interface FileTableAllProps {
+    count: number,
+    keyWord: string,
+    page: number,
+    page_size: number,
+    files: FileTableProps[]
+}

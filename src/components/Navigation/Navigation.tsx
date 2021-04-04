@@ -2,8 +2,8 @@ import React, { useEffect } from "react";
 import "./Navigation.less"
 import { ReactComponent as Logo } from "../../assets/LOGO.svg";
 import { useHistory } from 'react-router-dom';
-import {inject, observer} from "mobx-react";
-import { Menu, Dropdown } from 'antd';
+import { inject, observer } from "mobx-react";
+import { Menu, Dropdown, message } from 'antd';
 import Icon, { DownOutlined } from '@ant-design/icons';
 
 export const Navigation: React.FC<any> = ({ UserInfoStore, FileStore, LibraryStore }) => {
@@ -21,6 +21,7 @@ export const Navigation: React.FC<any> = ({ UserInfoStore, FileStore, LibrarySto
         }
         UserInfoStore.setUserName(userName)
         UserInfoStore.setToken(token)
+        UserInfoStore.readPlugin()
     }
     const signOut = () => {
         LibraryStore.clearLibraryList()
@@ -41,8 +42,14 @@ export const Navigation: React.FC<any> = ({ UserInfoStore, FileStore, LibrarySto
             localStorage.removeItem('Token')
             history.replace('/login')
         }).catch(error => {
-            console.log(error)
+            message.error(error).then()
         })
+    }
+    const clickRepository = () => {
+        history.replace('/repository')
+    }
+    const clickMangement = () => {
+        history.replace('/mangement')
     }
     useEffect(()=>{
         initUser()
@@ -68,6 +75,20 @@ export const Navigation: React.FC<any> = ({ UserInfoStore, FileStore, LibrarySto
         <div className="navigation_container">
             <div className="navigation_logo">
                 <Icon component={Logo} style={{fontSize: 153}}/>
+            </div>
+            <div className="navigation_items">
+                <div
+                    className="navigation_repository"
+                    onClick = {clickRepository}
+                >
+                    <span>我的网盘</span>
+                </div>
+                <div
+                    className="navigation_bms"
+                    onClick = {clickMangement}
+                >
+                    <span>进入后台</span>
+                </div>
             </div>
             <div className="navigation_user">
                 <Dropdown overlay={menu} placement="bottomCenter">

@@ -26,11 +26,39 @@
       }
     }
   }
+  .navigation_items{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 65%;
+    .navigation_repository{
+      cursor: pointer;
+      justify-content: space-around;
+      align-items: center;
+      color: @text-color;
+      font-size: 14px;
+      margin-right: 10%;
+    }
+    .navigation_repository:hover{
+      color: @primary-color;
+    }
+    .navigation_bms{
+      cursor: pointer;
+      justify-content: space-around;
+      align-items: center;
+      color: @text-color;
+      font-size: 14px;
+      margin-right: 10%;
+    }
+    .navigation_bms:hover{
+      color: @primary-color;
+    }
+  }
   .navigation_user{
-    width: 80px;
     height:40px;
     cursor: pointer;
     display: flex;
+    margin-right: 20px;
     justify-content: space-around;
     align-items: center;
     color: @text-color;

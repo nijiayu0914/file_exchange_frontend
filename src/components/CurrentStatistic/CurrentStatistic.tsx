@@ -2,10 +2,10 @@ import React, {useEffect, useState} from "react";
 import "./CurrentStatistic.less";
 import { BasicStyle } from "../../theme/classic"
 import { inject, observer } from "mobx-react";
-import { Progress, Statistic, Tag} from "antd";
+import { Progress, Statistic, Tag } from "antd";
 
 export const CurrentStatistic: React.FC<any> = (props) => {
-    const { LibraryStore, FileStore } = props
+    const { UserInfoStore, LibraryStore, FileStore } = props
     const [nowTime, setNowTime] = useState<string>()
     const [usage, setUsage] = useState<[number, number]>([0, 0])
 
@@ -43,7 +43,15 @@ export const CurrentStatistic: React.FC<any> = (props) => {
     return (
         <div className="current_statistic_container">
             <div className="current_statistic_content">
-                <Statistic title="文件夹数量"
+                <Statistic title={<Tag color="purple">资料夹数量:</Tag>}
+                           style={{display: "flex", flexDirection: "row",
+                               justifyContent: "space-around", width: "100%"}}
+                           valueStyle={{ fontSize: 14, color: BasicStyle["@text-color"]}} value={
+                               LibraryStore.libraryList.length + ' / ' + UserInfoStore.maxLibrary
+                }/>
+            </div>
+            <div className="current_statistic_content">
+                <Statistic title={<Tag color="purple">文件夹数量:</Tag>}
                            style={{display: "flex", flexDirection: "row",
                                justifyContent: "space-around", width: "100%"}}
                            valueStyle={{ fontSize: 14, color: BasicStyle["@text-color"]}} value={
@@ -52,22 +60,22 @@ export const CurrentStatistic: React.FC<any> = (props) => {
                 } suffix="个" />
             </div>
             <div className="current_statistic_content">
-                <Statistic title="文件数量"
+                <Statistic title={<Tag color="purple">文件数量:</Tag>}
                            style={{display: "flex", flexDirection: "row",
                                justifyContent: "space-around", width: "100%"}}
                            valueStyle={{ fontSize: 14, color: BasicStyle["@text-color"]}} value={
                     FileStore.currentStatisticData[FileStore.activeLibrary] ?
                         FileStore.currentStatisticData[FileStore.activeLibrary][1] : 0
-                } suffix="个" />
+                           } suffix="个" />
             </div>
-            <div className="current_statistic_content" style={{width: 250,
+            <div className="current_statistic_content" style={{width: 270,
                 display: "flex", justifyContent: "space-between"}}>
-                <span>使用量:</span>
+                {<Tag color="purple">使用量:</Tag>}
                 <Progress percent={
                     Number.parseFloat((usage[0] / usage[1] * 100).toFixed(2))}
                           steps={5} strokeColor={BasicStyle["@level3"]} />
                 <Tag
-                    color="purple"
+                    color="blue"
                     onClick={refreshUsage}
                     style={{cursor: "pointer"}}
                 >刷新</Tag>
@@ -79,4 +87,5 @@ export const CurrentStatistic: React.FC<any> = (props) => {
     )
 }
 
-export default inject('LibraryStore', 'FileStore')(observer(CurrentStatistic));
+export default inject(
+    'UserInfoStore', 'LibraryStore', 'FileStore')(observer(CurrentStatistic));

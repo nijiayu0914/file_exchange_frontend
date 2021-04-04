@@ -7,6 +7,7 @@ import store from './store/store';
 import { HashRouter, Route, Switch,  } from "react-router-dom";
 import { Login } from "./pages/Login/Login"
 import { Repository } from "./pages/Repository/Repository"
+import { Management } from "./pages/Management/Management"
 
 ReactDOM.render(
   <React.StrictMode>
@@ -16,6 +17,7 @@ ReactDOM.render(
                   <Route exact path="/" component={Repository} />
                   <Route path="/login" component={Login} />
                   <Route path="/repository" component={Repository} />
+                  <Route path="/mangement" component={Management} />
                   <Route render={() => <h1>404 not found 页面去火星了 ！</h1>} />
               </Switch>
           </HashRouter>

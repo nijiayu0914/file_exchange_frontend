@@ -6,7 +6,7 @@ import { FolderAddFilled, ExclamationCircleOutlined, SyncOutlined } from "@ant-d
 import {Avatar, Dropdown, Input, List, Menu, message, Modal} from 'antd';
 const { Search } = Input;
 
-export const Library: React.FC<any> = ({LibraryStore, FileStore}) => {
+export const Library: React.FC<any> = ({ UserInfoStore, LibraryStore, FileStore }) => {
     const [libraryName, setlibraryName] = useState('');
 
     useEffect(() => {
@@ -19,6 +19,8 @@ export const Library: React.FC<any> = ({LibraryStore, FileStore}) => {
     const createLibrary = (libraryName: string) => {
         if(!libraryName || libraryName.length === 0){
             message.warn("资料夹名称不能为空").then()
+        }else if(UserInfoStore.maxLibrary <= LibraryStore.libraryList.length){
+            message.warn("已达到可用上限").then()
         }else{
             LibraryStore.createLibrary(libraryName)
         }
@@ -57,7 +59,10 @@ export const Library: React.FC<any> = ({LibraryStore, FileStore}) => {
                 </div>
             ),
             onOk: () => {
-                LibraryStore.deleteLibrary(uuid)
+                LibraryStore.deleteLibrary(uuid).then(() => {
+                    LibraryStore.clearOpenLibraryList()
+                    FileStore.setActiveLibrary('')
+                })
             },
         });
     }
@@ -141,4 +146,4 @@ export const Library: React.FC<any> = ({LibraryStore, FileStore}) => {
     );
 };
 
-export default inject('LibraryStore', 'FileStore')(observer(Library));
+export default inject('UserInfoStore', 'LibraryStore', 'FileStore')(observer(Library));
