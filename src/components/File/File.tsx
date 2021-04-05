@@ -1,11 +1,11 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import "./File.less"
-import {inject, observer} from "mobx-react";
-import {Dropdown, Input, Menu, Modal, Tag} from 'antd';
+import { inject, observer } from "mobx-react";
+import { Dropdown, Input, Menu, Modal, Tag } from 'antd';
 import FileIcon from "../FileIcon/FileIcon";
-import Icon, {SyncOutlined} from "@ant-design/icons";
+import Icon, { SyncOutlined } from "@ant-design/icons";
 import {ReactComponent as Look} from "../../assets/pageicon/Look.svg";
-import {BasicStyle} from "../../theme/classic";
+import { BasicStyle } from "../../theme/classic";
 import {ReactComponent as Rename} from "../../assets/pageicon/Rename.svg";
 import {ReactComponent as CreateFolder} from "../../assets/pageicon/CreateFolder.svg";
 import {ReactComponent as Copy} from "../../assets/pageicon/Copy.svg";
@@ -15,6 +15,7 @@ import {ReactComponent as Download} from "../../assets/pageicon/Download.svg";
 import {ReactComponent as Share} from "../../assets/pageicon/Share.svg";
 import {ReactComponent as RollBack} from "../../assets/pageicon/RollBack.svg";
 import {ReactComponent as Delete} from "../../assets/pageicon/Delete.svg";
+import FileViewer from 'react-file-viewer';
 
 export const File: React.FC<any> = (props) => {
     const {
@@ -23,9 +24,18 @@ export const File: React.FC<any> = (props) => {
         clickLook, createFolderModal, listFiles, downloadFile, deleteFile,
         listDeleteMarkers } = props
     const [contextMenuSelected, setContextMenuSelected] = useState<string[]>([])
-    const doubleClickFile = () => {
-        if(file.category === 'folder'){
+    const [previewShow, setPreviewShow] =useState<boolean>(false)
+    const [fileUrl, setFileUrl] =useState<string>('')
+    const doubleClickFile = async () => {
+        if (file.category === 'folder') {
             changeFilePath(file.name.replace(uuid + '/', ''))
+        } else {
+            console.log(file.originName.substr(
+                file.originName.lastIndexOf(".") + 1))
+            const fileUrlData: object = await FileStore.downloadFile(
+                uuid, file.name.replace(uuid + '/', ''))
+            setFileUrl(fileUrlData['data'])
+            setPreviewShow(true)
         }
     }
     const click = (e) => {
@@ -237,7 +247,7 @@ export const File: React.FC<any> = (props) => {
                                      click(e)
                                  }
                              }}
-                             onDoubleClick={() => {doubleClickFile()}}
+                             onDoubleClick={() => {doubleClickFile().then()}}
                         >
                             <FileIcon fileType={file.suffix} size={64} />
                             <div className="file_name"><span>{
@@ -250,18 +260,8 @@ export const File: React.FC<any> = (props) => {
                         :
                         <div className={FileStore.checkedFile.has(file.name)
                             ? "file_detail checked" : "file_detail file_hover"}
-                             onClick={(e) => {
-                                 e.stopPropagation()
-                                 if (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) {
-                                     FileStore.addCheckedFile(file.name, false)
-                                 }else if(e.shiftKey){
-                                     shiftAddCheckedFile(listIndex)
-                                 }else{
-                                     FileStore.addCheckedFile(file.name)
-                                 }
-                                 cauSize()
-                             }}
-                             onDoubleClick={() => {doubleClickFile()}}
+                             onClick={click}
+                             onDoubleClick={() => {doubleClickFile().then()}}
                         >
                             <div className="file_icon" style={{marginRight: "10px"}}>
                                 <FileIcon fileType={file.suffix} size={28}/>
@@ -288,6 +288,28 @@ export const File: React.FC<any> = (props) => {
                             </div>
                         </div>
                 }
+                <Modal
+                    title="文件预览"
+                    destroyOnClose={true}
+                    width="90%"
+                    bodyStyle={{minHeight: 700}}
+                    visible={previewShow}
+                    onOk={() => {setPreviewShow(false)}}
+                    onCancel={() => {setPreviewShow(false)}}>
+                    <div style={{width: "100%", height: 700}}>
+                        {
+                            file.originName.substr(
+                                file.originName.lastIndexOf(".") + 1) === 'pdf' ?
+                                <iframe width = "100%" height="700" src={fileUrl} />
+                                :
+                                <FileViewer
+                                    fileType={file.originName.substr(
+                                        file.originName.lastIndexOf(".") + 1)}
+                                    filePath={fileUrl}
+                                    errorComponent={<div>此格式无法预览</div>}/>
+                        }
+                    </div>
+                </Modal>
             </div>
         </Dropdown>
     );

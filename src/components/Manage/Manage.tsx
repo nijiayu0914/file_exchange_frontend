@@ -4,7 +4,7 @@ import { BasicStyle } from "../../theme/classic"
 import { inject, observer } from "mobx-react";
 import {
     Alert, Space, Input, Spin, Table, Tag,
-    Modal, Select, InputNumber, message
+    Modal, Select, InputNumber, message, Button
 } from "antd";
 const { Search } = Input;
 const { Option } = Select;
@@ -17,6 +17,8 @@ export const Manage: React.FC<any> = ({ UserInfoStore, LibraryStore, FileStore }
         {count: 0, keyWord: '', page: 1, page_size: 10, files: []})
     const [userPluginsKeyWord, setUserPluginsKeyWord] = useState<string>('')
     const [filesKeyWord, setFilesKeyWord] = useState<string>('')
+    const [bucketInfo, setBucketInfo] = useState<BucketInfoProps>(
+        {"historyclear_days": 0})
     const readAllPlugins = (page: number = 1, pageSize: number = 10,
                             keyWord: string = userPluginsKeyWord) => {
         UserInfoStore.readAllPlugins(page, pageSize, keyWord).then(res => {
@@ -193,6 +195,16 @@ export const Manage: React.FC<any> = ({ UserInfoStore, LibraryStore, FileStore }
             )
         })
     }
+    const readBucketInfo = () => {
+        FileStore.bucketInfo().then(res => {
+            setBucketInfo(res.data)
+        }).catch(() => {
+            message.error("文件服务器信息查询失败").then()
+        })
+    }
+    const fileServerInfoChange = () => {
+        //暂时不允许对oss配置做任何修改
+    }
     const refreshUsage = async (uuid: string) => {
         const readRes = await LibraryStore.readAllFilesSize(uuid)
         const size = readRes.data['size']
@@ -350,7 +362,7 @@ export const Manage: React.FC<any> = ({ UserInfoStore, LibraryStore, FileStore }
         }
     ]
     useEffect(() => {
-        if(UserInfoStore.adminName !== UserInfoStore.UserName
+        if(UserInfoStore.adminName !== UserInfoStore.userName
             && UserInfoStore.permission !== 1004){
             setIsShow(false)
         }else{
@@ -361,7 +373,7 @@ export const Manage: React.FC<any> = ({ UserInfoStore, LibraryStore, FileStore }
     }, [UserInfoStore.adminName, UserInfoStore.permission, userPluginsKeyWord])
 
     useEffect(() => {
-        if(UserInfoStore.adminName !== UserInfoStore.UserName
+        if(UserInfoStore.adminName !== UserInfoStore.userName
             && UserInfoStore.permission !== 1004){
             setIsShow(false)
         }else{
@@ -370,6 +382,17 @@ export const Manage: React.FC<any> = ({ UserInfoStore, LibraryStore, FileStore }
         }
         // eslint-disable-next-line
     }, [UserInfoStore.adminName, UserInfoStore.permission, filesKeyWord])
+
+    useEffect(() => {
+        if(UserInfoStore.adminName !== UserInfoStore.userName
+            && UserInfoStore.permission !== 1004){
+            setIsShow(false)
+        }else{
+            setIsShow(true)
+            readBucketInfo()
+        }
+        // eslint-disable-next-line
+    }, [UserInfoStore.adminName, UserInfoStore.permission])
 
     return (
         <div className="manage_container">
@@ -438,6 +461,34 @@ export const Manage: React.FC<any> = ({ UserInfoStore, LibraryStore, FileStore }
                                 }
                             }}
                         />
+                        <div className="manage_bucketInfo_title manage_table_title">
+                            <span>文件服务器信息:</span>
+                        </div>
+                        <div className="manage_bucketInfo_detail">
+                            <div className="manage_bucketInfo_detail_item">
+                                <span>历史文件清理周期:</span>
+                                <InputNumber
+                                    disabled
+                                    value={bucketInfo.historyclear_days}
+                                    min={1}
+                                    max={365}
+                                    step={1}
+                                    size="small"
+                                    onChange={(value) => {
+                                        setBucketInfo({historyclear_days: value})
+                                    }}
+                                />
+                            </div>
+                        </div>
+                        <div className="manage_bucketInfo_detail_item">
+                            <Button
+                                type="primary"
+                                style={{display: "none"}}
+                                onClick={() => {
+                                    fileServerInfoChange()
+                                }}
+                            >提交</Button>
+                        </div>
                     </div>
                     :
                     <div style={{margin: 20, width: "100%"}}>
@@ -452,9 +503,8 @@ export const Manage: React.FC<any> = ({ UserInfoStore, LibraryStore, FileStore }
                         </Spin>
                     </div>
             }
-
         </div>
-    );
+    )
 }
 
-export default inject('UserInfoStore', 'LibraryStore', 'FileStore')(observer(Manage));
+export default inject('UserInfoStore', 'LibraryStore', 'FileStore')(observer(Manage))

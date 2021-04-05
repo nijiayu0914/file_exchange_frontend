@@ -77,6 +77,16 @@ export default class FileStore {
         })
     }
 
+    @action bucketInfo(){
+        return new Promise((resolve, reject)=>{
+            instance.get(API.bucketInfo).then(res => {
+                resolve(res)
+            }).catch(error => {
+                reject(error);
+            });
+        })
+    }
+
     @action createFolder(uuid: string, fileName: string){
         return new Promise((resolve, reject)=>{
             instance.get(API.createFolder, {

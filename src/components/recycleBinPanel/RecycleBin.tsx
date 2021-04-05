@@ -33,8 +33,8 @@ export const RecycleBin: React.FC<any> = (props) => {
             }
         }
         FileStore.deleteFilesForever(uuid, fileNames).then(() => {
-            LibraryStore.listLibrary()
             listDeleteMarkers(true, true)
+            LibraryStore.listLibrary()
             message.success("删除成功").then()
         })
     }
