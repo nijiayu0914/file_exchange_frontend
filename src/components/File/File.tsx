@@ -307,7 +307,7 @@ export const File: React.FC<any> = (props) => {
                         {
                             file.originName.substr(
                                 file.originName.lastIndexOf(".") + 1) === 'pdf' ?
-                                <iframe width = "100%" height="700" src={fileUrl} />
+                                <iframe title="preview" width = "100%" height="700" src={fileUrl} />
                                 :
                                 <FileViewer
                                     fileType={file.originName.substr(
