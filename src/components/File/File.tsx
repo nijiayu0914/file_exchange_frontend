@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./File.less"
 import { inject, observer } from "mobx-react";
+import { REACT_APP_HTTPS } from "../../config"
 import { Dropdown, Input, Menu, Modal, Spin, Tag } from 'antd';
 import FileIcon from "../FileIcon/FileIcon";
 import Icon, { SyncOutlined } from "@ant-design/icons";
@@ -30,11 +31,14 @@ export const File: React.FC<any> = (props) => {
         if (file.category === 'folder') {
             changeFilePath(file.name.replace(uuid + '/', ''))
         } else {
-            console.log(file.originName.substr(
-                file.originName.lastIndexOf(".") + 1))
             const fileUrlData: object = await FileStore.downloadFile(
                 uuid, file.name.replace(uuid + '/', ''))
-            setFileUrl(fileUrlData['data'])
+            if(REACT_APP_HTTPS){
+                setFileUrl(fileUrlData['data'].replace('http://', 'https://'))
+            }else{
+                setFileUrl(fileUrlData['data'].replace('https://', 'http://'))
+            }
+
             setPreviewShow(true)
         }
     }
