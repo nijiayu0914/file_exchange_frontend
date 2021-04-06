@@ -54,28 +54,33 @@ module.exports = {
             webpackConfig.entry = {"main": "./index.tsx"}
             webpackConfig.optimization.splitChunks = {
                 minChunks: 1,
-                maxAsyncRequests: 6,
-                maxInitialRequests: 6,
+                maxAsyncRequests: 8,
+                maxInitialRequests: 8,
                 automaticNameDelimiter: '~',
                 cacheGroups: {
+                    viewer: {
+                        test: /[\\/]react-file-viewer[\\/]/,
+                        chunks: 'all',
+                        priority: 100,
+                    },
                     basic: {
                         test: /(react|react-dom|react-dom-router|babel-polyfill|mobx)/,
                         chunks: 'all',
-                        priority: 100,
+                        priority: 90,
                     },
                     antd: {
                         test: /[\\/]antd[\\/]/,
                         chunks: 'all',
-                        priority: 90
+                        priority: 80
                     },
                     oss: {
                         test: /[\\/]ali-oss[\\/]/,
                         chunks: 'all',
-                        priority: 80
+                        priority: 70
                     },
                     commons: {
                         chunks: 'all',
-                        priority: 70,
+                        priority: 60,
                         reuseExistingChunk: true,
 
                     },
