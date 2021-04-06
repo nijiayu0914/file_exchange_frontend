@@ -232,7 +232,13 @@ export const Files: React.FC<any> = (props) => {
                     uuid, item.name.replace(uuid + '/', ''))
                 if(downloadRes['code'] === 200){
                     if(download){
-                        window.open(downloadRes['data']);
+                        if(REACT_APP_HTTPS){
+                            window.open((downloadRes['data'].replace(
+                                'http://', 'https://').replace('-internal', '')))
+                        }else{
+                            window.open((downloadRes['data'].replace(
+                                'https://', 'http://').replace('-internal', '')))
+                        }
                     }else{
                         return downloadRes['data']
                     }

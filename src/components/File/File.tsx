@@ -34,9 +34,11 @@ export const File: React.FC<any> = (props) => {
             const fileUrlData: object = await FileStore.downloadFile(
                 uuid, file.name.replace(uuid + '/', ''))
             if(REACT_APP_HTTPS){
-                setFileUrl(fileUrlData['data'].replace('http://', 'https://'))
+                setFileUrl(fileUrlData['data'].replace(
+                    'http://', 'https://').replace('-internal', ''))
             }else{
-                setFileUrl(fileUrlData['data'].replace('https://', 'http://'))
+                setFileUrl(fileUrlData['data'].replace(
+                    'https://', 'http://').replace('-internal', ''))
             }
 
             setPreviewShow(true)
