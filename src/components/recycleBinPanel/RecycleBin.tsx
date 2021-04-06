@@ -6,9 +6,18 @@ import { message, Tag, Tooltip} from "antd";
 
 export const RecycleBin: React.FC<any> = (props) => {
     const { RecycleBinList, listDeleteMarkers, LibraryStore, FileStore } = props
+    const refreshFilesCache = (uuid: string, fileName: string) => {
+        if(fileName[fileName.length - 1] === '/'){
+            fileName = fileName.slice(0, fileName.length - 1)
+        }
+        if(fileName.indexOf('/') !== -1){
+            FileStore.listFiles(uuid, fileName.slice(0, fileName.lastIndexOf('/') + 1), '/', true)
+        }
+    }
     const restoreFile = (uuid: string, path: string) => {
         FileStore.restoreFile(uuid, path).then(() => {
             listDeleteMarkers(true, true)
+            refreshFilesCache(uuid, path)
             message.success("还原成功").then()
         })
     }
@@ -34,6 +43,9 @@ export const RecycleBin: React.FC<any> = (props) => {
         }
         FileStore.deleteFilesForever(uuid, fileNames).then(() => {
             listDeleteMarkers(true, true)
+            fileNames.forEach(fileName => {
+                refreshFilesCache(uuid, fileName)
+            })
             LibraryStore.listLibrary()
             message.success("删除成功").then()
         })

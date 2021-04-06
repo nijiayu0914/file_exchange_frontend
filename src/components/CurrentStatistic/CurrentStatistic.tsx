@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import "./CurrentStatistic.less";
 import { BasicStyle } from "../../theme/classic"
 import { inject, observer } from "mobx-react";
-import { Progress, Statistic, Tag } from "antd";
+import { message, Progress, Statistic, Tag} from "antd";
 
 export const CurrentStatistic: React.FC<any> = (props) => {
     const { UserInfoStore, LibraryStore, FileStore } = props
@@ -20,10 +20,12 @@ export const CurrentStatistic: React.FC<any> = (props) => {
     }
 
     const refreshUsage = async () => {
+        message.info("loading.....", 2)
         const readRes = await LibraryStore.readAllFilesSize(FileStore.activeLibrary)
         const size = readRes.data['size']
         FileStore.updateUsage(FileStore.activeLibrary, size, "overwrite").then(() => {
             LibraryStore.listLibrary()
+            message.success("更新成功!")
         })
     }
 
