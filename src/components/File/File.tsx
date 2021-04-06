@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./File.less"
 import { inject, observer } from "mobx-react";
-import { Dropdown, Input, Menu, Modal, Tag } from 'antd';
+import { Dropdown, Input, Menu, Modal, Spin, Tag } from 'antd';
 import FileIcon from "../FileIcon/FileIcon";
 import Icon, { SyncOutlined } from "@ant-design/icons";
 import {ReactComponent as Look} from "../../assets/pageicon/Look.svg";
@@ -15,7 +15,7 @@ import {ReactComponent as Download} from "../../assets/pageicon/Download.svg";
 import {ReactComponent as Share} from "../../assets/pageicon/Share.svg";
 import {ReactComponent as RollBack} from "../../assets/pageicon/RollBack.svg";
 import {ReactComponent as Delete} from "../../assets/pageicon/Delete.svg";
-import FileViewer from 'react-file-viewer';
+const FileViewer = React.lazy(() => import('react-file-viewer'));
 
 export const File: React.FC<any> = (props) => {
     const {
@@ -226,7 +226,8 @@ export const File: React.FC<any> = (props) => {
         </Menu>
     );
     return (
-        <Dropdown overlay={menu} trigger={['contextMenu']}>
+        <React.Suspense fallback={<Spin tip="loading....."/>}>
+            <Dropdown overlay={menu} trigger={['contextMenu']}>
             <div
                 className={how ? "file_container_view": "file_container_list"}
                 style={
@@ -312,7 +313,8 @@ export const File: React.FC<any> = (props) => {
                 </Modal>
             </div>
         </Dropdown>
+        </React.Suspense>
     );
 }
 
-export default inject('LibraryStore', 'FileStore')(observer(File));
+export default inject('LibraryStore', 'FileStore')(observer(File))
