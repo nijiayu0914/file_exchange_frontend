@@ -15,6 +15,9 @@ export const userPlugin = REACT_APP_BASE_URL + "/user_plugin/read"
 // 获取所有用户配置
 export const userPluginsAll = REACT_APP_BASE_URL + "/user_plugin/read_all"
 
+// 获取Bucket信息
+export const bucketInfo = REACT_APP_BASE_URL + "/user_plugin/bucket_info"
+
 // 获取所有文件夹
 export const filesAll = REACT_APP_BASE_URL + "/user_plugin/read_files"
 

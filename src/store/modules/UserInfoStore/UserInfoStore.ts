@@ -122,8 +122,8 @@ export default class UserInfoStore {
                 runInAction(() => {
                     let data = res.data
                     this.adminName = data["admin_name"]
-                    this.maxLibrary = data["user_plugin"]['max_library']
-                    this.permission = data["user_plugin"]['permission']
+                    this.maxLibrary = data["user_plugin"] ? data["user_plugin"]['max_library'] : 0
+                    this.permission = data["user_plugin"] ? data["user_plugin"]['permission'] : 1001
                 })
                 resolve(res)
             }).catch(error => {

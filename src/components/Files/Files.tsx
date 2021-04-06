@@ -45,6 +45,7 @@ export const Files: React.FC<any> = (props) => {
             if(navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey){
                 FileStore.copyFiles(uuid, uuid + '/' + currentFilePath).then(() => {
                     listFiles(uuid, currentFilePath, true)
+                    LibraryStore.listLibrary()
                 })
             }
         }
@@ -271,7 +272,10 @@ export const Files: React.FC<any> = (props) => {
         }
     }
     useEffect(() => {
-        window.onkeydown = copyKeyboardEvent
+        window.addEventListener("keydown", copyKeyboardEvent)
+        return () => {
+            window.removeEventListener("keydown", copyKeyboardEvent)
+        }
         // eslint-disable-next-line
     }, [currentFilePath])
     useEffect(() => {
@@ -317,6 +321,7 @@ export const Files: React.FC<any> = (props) => {
                         FileStore.copyFiles(uuid, uuid + '/' + currentFilePath).then(
                             () => {
                                 listFiles(uuid, currentFilePath, true)
+                                LibraryStore.listLibrary()
                             })
                         setContextMenuSelected([])
                         break

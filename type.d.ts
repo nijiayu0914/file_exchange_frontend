@@ -99,3 +99,7 @@ interface FileTableAllProps {
     page_size: number,
     files: FileTableProps[]
 }
+
+interface BucketInfoProps {
+    historyclear_days: number
+}
