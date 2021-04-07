@@ -6,7 +6,7 @@
     <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <g id="LOGO" transform="translate(-10.000000, -9.000000)">
             <rect id="矩形" x="0" y="0" width="300" height="50"></rect>
-            <text class="svg_color" id="PORTAL" opacity="0.85" font-family="HanziPenTC-W5, HanziPen TC" font-size="30" font-weight="bold" line-spacing="32" fill="#85A5FF">
+            <text class="svg_color" id="PORTAL" opacity="0.85" font-family="ComicSansMS-Bold, Comic Sans MS" font-size="30" font-weight="bold" line-spacing="32" fill="#85A5FF">
                 <tspan x="56" y="40">PORTAL</tspan>
             </text>
             <g class="svg_color" id="hcs_mgw-闪电立方" transform="translate(10.000000, 9.000000)" fill="#85A5FF" fill-rule="nonzero">
