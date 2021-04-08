@@ -34,7 +34,13 @@ export const Files: React.FC<any> = (props) => {
     const [historyPath, setHistoryPath] = useState<string[]>([''])
     const [historyPathCursor, setHistoryPathCursor] = useState<number>(0)
     const [contextMenuSelected, setContextMenuSelected] = useState<string[]>([])
+    const [mouseDownStatus, setMouseDownStatus] = useState<boolean>(false)
+    const [regionSelectStartX, setRegionSelectStartX] = useState<number>(0)
+    const [regionSelectStartY, setRegionSelectStartY] = useState<number>(0)
+    const [regionSelectNowX, setRegionSelectNowX] = useState<number>(0)
+    const [regionSelectNowY, setRegionSelectNowY] = useState<number>(0)
     const uploadComponent = useRef(null)
+    const regionSelectComponent = useRef(null)
 
     const copyKeyboardEvent = (e) => {
         if(e.keyCode === 67){
@@ -573,6 +579,40 @@ export const Files: React.FC<any> = (props) => {
                             FileStore.clearCheckedFile()
                             cauSize()
                         }
+                        if(e.button === 0){
+                            setMouseDownStatus(true)
+                            setRegionSelectStartX(e.pageX)
+                            setRegionSelectStartY(e.pageY)
+                            setRegionSelectNowX(e.pageX)
+                            setRegionSelectNowY(e.pageY)
+                        }
+                    }}
+                    onMouseUp={(e) => {
+                        if(e.button === 0){
+                            setMouseDownStatus(false)
+                            setRegionSelectNowX(0)
+                            setRegionSelectNowY(0)
+                        }
+                    }}
+                    onMouseMove={(e) => {
+                        if(mouseDownStatus){
+                            if(e.button === 0){
+                                // @ts-ignore
+                                regionSelectComponent.current.style.left = Math.min(
+                                    regionSelectStartX, e.pageX) + "px"
+                                // @ts-ignore
+                                regionSelectComponent.current.style.top = Math.min(
+                                    regionSelectStartY, e.pageY) + "px"
+                                // @ts-ignore
+                                regionSelectComponent.current.style.width = Math.abs(
+                                    regionSelectStartX - e.pageX) + "px"
+                                // @ts-ignore
+                                regionSelectComponent.current.style.height = Math.abs(
+                                    regionSelectStartY - e.pageY)+ "px"
+                                setRegionSelectNowX(e.pageX)
+                                setRegionSelectNowY(e.pageY)
+                            }
+                        }
                     }}
                 >
                     {currentFileList.map((item, index) => {
@@ -596,6 +636,11 @@ export const Files: React.FC<any> = (props) => {
                             listDeleteMarkers={listDeleteMarkers}
                         />
                     })}
+                    <div
+                        className="file_show_region_select"
+                        ref={regionSelectComponent}
+                        style={{display: mouseDownStatus ? "block" : "none",}}
+                    />
                 </div>
             </Dropdown>
             <div className="files_info">

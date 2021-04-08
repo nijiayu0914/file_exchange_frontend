@@ -74,7 +74,7 @@ export const Navigation: React.FC<any> = ({ UserInfoStore, FileStore, LibrarySto
     return (
         <div className="navigation_container">
             <div className="navigation_logo">
-                <Icon component={Logo} style={{fontSize: 153}}/>
+                <Icon component={Logo} style={{fontSize: 160}}/>
             </div>
             <div className="navigation_items">
                 <div
