@@ -46,6 +46,16 @@ export default class UserInfoStore {
         return true
     }
 
+    @action getPlugins(){
+        return new Promise((resolve, reject)=>{
+            instance.get(API.plugins).then(res => {
+                resolve(res)
+            }).catch(error => {
+                reject(error);
+            });
+        })
+    }
+
     @action login(){
         if (!this.check(this.userName, '用户名不能为空')) return
         if (!this.check(this.password, '密码不能为空')) return

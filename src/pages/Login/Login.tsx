@@ -1,10 +1,10 @@
 import React, { useState }  from "react";
-import "./Login.less"
-import SignIn  from "../../components/SignIn/SignIn"
-import SignUp from "../../components/SignUp/SignUp"
+import "./Login.less";
+import SignIn  from "../../components/SignIn/SignIn";
+import SignUp from "../../components/SignUp/SignUp";
+import WebsiteFiling from "../../components/WebsiteFiling/WebsiteFiling";
 import { ReactComponent as Logo } from "../../assets/LOGO.svg";
 import Icon from "@ant-design/icons";
-
 
 export const Login: React.FC = () => {
     const [tab, setTab] = useState(true);
@@ -34,16 +34,9 @@ export const Login: React.FC = () => {
                         {tab? <SignIn />: <SignUp />}
                     </div>
                 </div>
+                <WebsiteFiling />
             </div>
-            <div className="website_filing">
-                <div className="website_filing_center">
-                    <span>portal</span>
-                    <a href="http://www.beian.miit.gov.cn">沪ICP备15037556号</a>
-                    <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31011002003926">
-                        沪公网安备000000号
-                    </a>
-                </div>
-            </div>
+
         </>
     );
 };
