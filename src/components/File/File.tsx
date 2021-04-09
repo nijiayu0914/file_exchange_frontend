@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import "./File.less"
 import { inject, observer } from "mobx-react";
 import { REACT_APP_HTTPS } from "../../config"
@@ -27,6 +27,7 @@ export const File: React.FC<any> = (props) => {
     const [contextMenuSelected, setContextMenuSelected] = useState<string[]>([])
     const [previewShow, setPreviewShow] =useState<boolean>(false)
     const [fileUrl, setFileUrl] =useState<string>('')
+    const fileMainComponent = useRef(null)
     const doubleClickFile = async () => {
         if (file.category === 'folder') {
             changeFilePath(file.name.replace(uuid + '/', ''))
@@ -236,6 +237,7 @@ export const File: React.FC<any> = (props) => {
             <Dropdown overlay={menu} trigger={['contextMenu']}>
             <div
                 className={how ? "file_container_view": "file_container_list"}
+                ref={fileMainComponent}
                 style={
                     file.originName.indexOf(
                         currentSearchPath.split('/')[currentSearchPath.split('/').length - 1]) >= 0
