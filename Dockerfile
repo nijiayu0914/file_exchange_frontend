@@ -23,3 +23,5 @@ EXPOSE 443
 
 COPY --from=builder /app/build /var/www
 
+RUN rm /etc/nginx/conf.d/default.conf
+RUN rm /etc/nginx/nginx.conf
