@@ -20,10 +20,6 @@ RUN yarn build
 FROM nginx
 EXPOSE 80
 EXPOSE 443
-RUN sed -i "s@http://deb.debian.org@http://mirrors.163.com@g" /etc/apt/sources.list \
-    && apt-get update
-RUN yes | apt-get install wget
 
 COPY --from=builder /app/build /var/www
-RUN rm /etc/nginx/conf.d/default.conf
-RUN rm /etc/nginx/nginx.conf
+
