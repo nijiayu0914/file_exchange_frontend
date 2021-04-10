@@ -1,3 +1,6 @@
+/**
+ * @description: 初始化Mobx Store
+ */
 import { configure } from 'mobx';
 
 // 用户信息

@@ -1,3 +1,6 @@
+/**
+ * @description: 用户登录，注册主页面
+ */
 import React, { useState }  from "react";
 import "./Login.less";
 import SignIn  from "../../components/SignIn/SignIn";
@@ -7,13 +10,17 @@ import { ReactComponent as Logo } from "../../assets/LOGO.svg";
 import Icon from "@ant-design/icons";
 
 export const Login: React.FC = () => {
-    const [tab, setTab] = useState(true);
+    const [tab, setTab] = useState(true); // true:登录, false:注册
+    /**
+     * 切换注册与登录页面
+     * @param _e
+     * @param {boolean} status tab状态
+     */
     const trigger = (_e, status) => {
         setTab(status)
     }
     return (
-        <>
-            <div className="login_page">
+        <div className="login_page">
                 <div className="login_container">
                     <div className="login_title">
                         <Icon component={Logo} />
@@ -36,7 +43,5 @@ export const Login: React.FC = () => {
                 </div>
                 <WebsiteFiling />
             </div>
-
-        </>
     );
 };

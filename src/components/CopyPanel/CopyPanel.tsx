@@ -1,3 +1,6 @@
+/**
+ * @description: 复制板
+ */
 import React from "react";
 import "./CopyPanel.less";
 import { inject, observer } from "mobx-react";

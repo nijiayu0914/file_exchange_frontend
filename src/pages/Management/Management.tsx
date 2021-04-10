@@ -1,3 +1,6 @@
+/**
+ * @description: 后台管理页
+ */
 import React from "react";
 import "./Management.less";
 import Navigation from "../../components/Navigation/Navigation";

@@ -1,3 +1,6 @@
+/**
+ * @description: 后端接口
+ */
 import { REACT_APP_BASE_URL } from "../../config"
 
 // 其他配置信息

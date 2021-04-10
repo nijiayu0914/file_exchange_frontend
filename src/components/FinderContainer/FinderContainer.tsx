@@ -1,4 +1,7 @@
-import React, {useEffect, useState} from "react";
+/**
+ * @description: 文件操作组件容器
+ */
+import React, { useEffect, useState } from "react";
 import "./FinderContainer.less";
 import { inject, observer } from "mobx-react";
 import { Collapse } from 'antd';
@@ -8,12 +11,14 @@ import CopyPanel from "../CopyPanel/CopyPanel";
 import RecycleBin from "../recycleBinPanel/RecycleBin";
 const { Panel } = Collapse;
 
-
 export const FinderContainer: React.FC<any> = (props) => {
     const { uuid, libraryName, FileStore } = props
     const [RecycleBinList, setRecycleBinList] = useState<RecycleBinProps[]>([])
     // 通过状态决定文件列表页面是否需要强制刷新，避免初始化时多次调用接口
     const [BinChange, setBinChange] = useState<boolean>(false)
+    /**
+     * 刷新按钮
+     */
     const genSyncOutlined = () => (
         <SyncOutlined onClick={
             event => {
@@ -21,6 +26,9 @@ export const FinderContainer: React.FC<any> = (props) => {
                 listDeleteMarkers(false, true)
             }}/>
         )
+    /**
+     * 清空按钮
+     */
     const genClearOutlined = () => (
         <ClearOutlined onClick={
             event => {
@@ -28,6 +36,11 @@ export const FinderContainer: React.FC<any> = (props) => {
                 FileStore.clearCopiedFile()
             }}/>
         )
+    /**
+     * 列举删除标记
+     * @param {boolean} refresh 是否刷新页面
+     * @param {boolean} force 是否强制刷新回收站缓存，默认false，如果接口存在缓存，则读取缓存
+     */
     const listDeleteMarkers = (refresh: boolean=false, force: boolean=false) => {
         FileStore.listDeleteMarkers(uuid, force).then(res =>{
             let binData: RecycleBinProps[] = []

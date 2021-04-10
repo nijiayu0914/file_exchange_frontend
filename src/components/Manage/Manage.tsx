@@ -1,4 +1,7 @@
-import React, {useEffect, useState} from "react";
+/**
+ * @description: 后台管理页面
+ */
+import React, { useEffect, useState } from "react";
 import "./Manage.less"
 import { BasicStyle } from "../../theme/classic"
 import { inject, observer } from "mobx-react";
@@ -19,6 +22,12 @@ export const Manage: React.FC<any> = ({ UserInfoStore, LibraryStore, FileStore }
     const [filesKeyWord, setFilesKeyWord] = useState<string>('')
     const [bucketInfo, setBucketInfo] = useState<BucketInfoProps>(
         {"historyclear_days": 0})
+    /**
+     * 读取所有用户配置信息
+     * @param {number} page 页码
+     * @param {number} pageSize 每页行数
+     * @param {string} keyWord 搜索关键字
+     */
     const readAllPlugins = (page: number = 1, pageSize: number = 10,
                             keyWord: string = userPluginsKeyWord) => {
         UserInfoStore.readAllPlugins(page, pageSize, keyWord).then(res => {
@@ -43,9 +52,15 @@ export const Manage: React.FC<any> = ({ UserInfoStore, LibraryStore, FileStore }
             }
         })
     }
+    /**
+     * 读取所有资料夹信息
+     * @param {number} page 页码
+     * @param {number} pageSize 每页行数
+     * @param {string} keyWord 搜索关键字
+     */
     const readAllFiles = (page: number = 1, pageSize: number = 10,
                             keyWord: string = filesKeyWord) => {
-        FileStore.readAllFiles(page, pageSize, keyWord).then(res => {
+        LibraryStore.readAllFiles(page, pageSize, keyWord).then(res => {
             let filesNew: any[] = []
             let data: FileTableAllProps = res.data
             data["files"].forEach((item, idx) => {
@@ -68,12 +83,26 @@ export const Manage: React.FC<any> = ({ UserInfoStore, LibraryStore, FileStore }
             }
         })
     }
+    /**
+     * 用户配置信息表切页
+     * @param {number} page 页码
+     * @param {number} pageSize 每页行数
+     */
     const userPluginsTablePageChange = (page: number, pageSize:number) => {
         readAllPlugins(page, pageSize, userPluginsKeyWord)
     }
+    /**
+     * 资料夹信息表切页
+     * @param {number} page 页码
+     * @param {number} pageSize 每页行数
+     */
     const filesTablePageChange = (page: number, pageSize:number) => {
         readAllFiles(page, pageSize, filesKeyWord)
     }
+    /**
+     * 弹窗更新用户权限等级
+     * @param record 选中行
+     */
     const changePermission = (record) => {
         let permission: number = record.permissionCode
         const model = Modal.confirm({
@@ -117,6 +146,10 @@ export const Manage: React.FC<any> = ({ UserInfoStore, LibraryStore, FileStore }
             )
         })
     }
+    /**
+     * 弹窗更新用户资料夹最大配额
+     * @param record 选中行
+     */
     const changeMaxLibrary = (record) => {
         let maxLibrary: number = record.maxLibrary
         const model = Modal.confirm({
@@ -156,6 +189,10 @@ export const Manage: React.FC<any> = ({ UserInfoStore, LibraryStore, FileStore }
             )
         })
     }
+    /**
+     * 更新资料夹最大配额
+     * @param record
+     */
     const changeCapacity = (record) => {
         let capacity: number = record.capacity
         const model = Modal.confirm({
@@ -195,6 +232,9 @@ export const Manage: React.FC<any> = ({ UserInfoStore, LibraryStore, FileStore }
             )
         })
     }
+    /**
+     * 读取OSS Bucket 信息
+     */
     const readBucketInfo = () => {
         FileStore.bucketInfo().then(res => {
             setBucketInfo(res.data)
@@ -202,9 +242,16 @@ export const Manage: React.FC<any> = ({ UserInfoStore, LibraryStore, FileStore }
             message.error("文件服务器信息查询失败").then()
         })
     }
+    /**
+     * 修改OSS配置信息
+     */
     const fileServerInfoChange = () => {
         //暂时不允许对oss配置做任何修改
     }
+    /**
+     * 刷新用户当前资料夹已使用量
+     * @param {string} uuid 资料夹uuid
+     */
     const refreshUsage = async (uuid: string) => {
         const readRes = await LibraryStore.readAllFilesSize(uuid)
         const size = readRes.data['size']
@@ -212,12 +259,18 @@ export const Manage: React.FC<any> = ({ UserInfoStore, LibraryStore, FileStore }
             LibraryStore.listLibrary()
         })
     }
+    /**
+     * 权限编号与权限等级映射关系
+     */
     const permissionMap: object = {
         1001: "低权限",
         1002: "中权限",
         1003: "高权限",
         1004: "管理员权限"
     }
+    /**
+     * 用户信息表定义
+     */
     const UserPluginTableColumns = [
         {
             title: "序号",
@@ -278,6 +331,9 @@ export const Manage: React.FC<any> = ({ UserInfoStore, LibraryStore, FileStore }
             )
         }
     ]
+    /**
+     * 资料夹信息表定义
+     */
     const FileTableColumns = [
         {
             title: "序号",

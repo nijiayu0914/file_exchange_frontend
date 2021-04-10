@@ -1,3 +1,6 @@
+/**
+ * @description: 当前资料夹与当前路径统计信息
+ */
 import React, {useEffect, useState} from "react";
 import "./CurrentStatistic.less";
 import { BasicStyle } from "../../theme/classic"
@@ -8,7 +11,9 @@ export const CurrentStatistic: React.FC<any> = (props) => {
     const { UserInfoStore, LibraryStore, FileStore } = props
     const [nowTime, setNowTime] = useState<string>()
     const [usage, setUsage] = useState<[number, number]>([0, 0])
-
+    /**
+     * 读取已使用用量
+     */
     const readUsage = () => {
         for(let i = 0; i < LibraryStore.libraryList.length; i ++){
             if(LibraryStore.libraryList[i].uuid === FileStore.activeLibrary){
@@ -18,7 +23,9 @@ export const CurrentStatistic: React.FC<any> = (props) => {
             }
         }
     }
-
+    /**
+     * 刷新用量
+     */
     const refreshUsage = async () => {
         message.info("loading.....", 2)
         const readRes = await LibraryStore.readAllFilesSize(FileStore.activeLibrary)

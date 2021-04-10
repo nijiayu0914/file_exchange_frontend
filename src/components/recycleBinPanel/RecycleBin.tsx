@@ -1,3 +1,6 @@
+/**
+ * @description: 回收站
+ */
 import React from "react";
 import "./RecycleBin.less";
 import { inject, observer } from "mobx-react";
@@ -6,6 +9,11 @@ import { message, Tag, Tooltip} from "antd";
 
 export const RecycleBin: React.FC<any> = (props) => {
     const { RecycleBinList, listDeleteMarkers, LibraryStore, FileStore } = props
+    /**
+     * 回收站操作后，更新相关页面列举文件缓存
+     * @param {string} uuid 资料夹uuid
+     * @param {string} fileName 文件名称
+     */
     const refreshFilesCache = (uuid: string, fileName: string) => {
         if(fileName[fileName.length - 1] === '/'){
             fileName = fileName.slice(0, fileName.length - 1)
@@ -14,6 +22,11 @@ export const RecycleBin: React.FC<any> = (props) => {
             FileStore.listFiles(uuid, fileName.slice(0, fileName.lastIndexOf('/') + 1), '/', true)
         }
     }
+    /**
+     * 还原文件
+     * @param {string} uuid 资料夹uuid
+     * @param {string} path 文件路径
+     */
     const restoreFile = (uuid: string, path: string) => {
         FileStore.restoreFile(uuid, path).then(() => {
             listDeleteMarkers(true, true)
@@ -21,6 +34,11 @@ export const RecycleBin: React.FC<any> = (props) => {
             message.success("还原成功").then()
         })
     }
+    /**
+     * 永久删除文件
+     * @param {string} uuid 资料夹uuid
+     * @param {string[]} fileNames 文件名称数组
+     */
     const DeleteFilesForever = (uuid: string, fileNames: string[]) => {
         for(let i = 0; i < fileNames.length; i ++){
             let key: string = fileNames[i]

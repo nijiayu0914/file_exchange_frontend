@@ -1,4 +1,7 @@
-import {makeAutoObservable, observable, action, runInAction } from 'mobx';
+/**
+ * @description: 文件相关业务接口及操作逻辑
+ */
+import { makeAutoObservable, observable, action, runInAction } from 'mobx';
 import instance from "../../../network/axios/instance";
 import * as API from "../../../network/api";
 import { message } from 'antd';
@@ -8,22 +11,38 @@ export default class FileStore {
         makeAutoObservable(this);
     }
 
-    @observable activeLibrary: string = ''
+    @observable activeLibrary: string = '' // 当前激活的资料夹
 
-    @observable checkedFile: Set<string> = new Set<string>()
+    @observable checkedFile: Set<string> = new Set<string>() // 选中的文件
 
-    @observable copiedFile: string[] = []
+    @observable copiedFile: string[] = [] // 在复制板中的文件
 
-    @observable currentStatisticData: object = {}
+    @observable currentStatisticData: object = {} // 当前激活的资料夹当前路径下文件夹，文件数量统计
 
+    /**
+     * 设置激活的资料夹
+     * @param {string} uuid 资料夹uuid
+     */
     @action setActiveLibrary(uuid: string){
         this.activeLibrary = uuid
     }
 
+    /**
+     * 添加当前资料夹当前路径下文件，文件夹数量统计
+     * @param {string} uuid 资料夹uuid
+     * @param {number} folderCount 文件夹数量
+     * @param {number} fileCount 文件数量
+     */
     @action addCurrentStatisticData(uuid: string, folderCount: number, fileCount: number){
         this.currentStatisticData[uuid] = [folderCount, fileCount]
     }
 
+    /**
+     * 添加选中的文件
+     * @param {string} name 文件夹名称,oss object key name
+     * @param {boolean} isClear 是否清空已选中的文件
+     * @param {boolean} isShift 是否使用shift批量选中功能
+     */
     @action addCheckedFile(name: string, isClear: boolean = true, isShift: boolean = false){
         if(isClear){
             this.checkedFile.clear()
@@ -37,18 +56,30 @@ export default class FileStore {
         }
     }
 
+    /**
+     * 清空选中的文件
+     */
     @action clearCheckedFile(){
         this.checkedFile.clear()
     }
 
+    /**
+     * 增加复制的文件
+     */
     @action addCopiedFile(){
         this.copiedFile = Array.from(this.checkedFile)
     }
 
+    /**
+     * 清空复制的文件
+     */
     @action clearCopiedFile(){
         this.copiedFile = []
     }
 
+    /**
+     * 从后端获取OSS临时授权
+     */
     @action createSTS(){
         return new Promise((resolve, reject)=>{
             instance.get(API.getGrant).then(res => {
@@ -60,23 +91,9 @@ export default class FileStore {
         })
     }
 
-    @action readAllFiles(page: number = 1, pageSize: number = 10,
-                           keyWord: string = ''){
-        return new Promise((resolve, reject)=>{
-            instance.get(API.filesAll, {
-                params:{
-                    "page": page,
-                    "page_size": pageSize,
-                    "key_word": keyWord
-                }
-            }).then(res => {
-                resolve(res)
-            }).catch(error => {
-                reject(error);
-            });
-        })
-    }
-
+    /**
+     * 获取OSS bucket相关配置信息
+     */
     @action bucketInfo(){
         return new Promise((resolve, reject)=>{
             instance.get(API.bucketInfo).then(res => {
@@ -87,6 +104,11 @@ export default class FileStore {
         })
     }
 
+    /**
+     * 创建文件夹
+     * @param {string} uuid 资料夹uuid
+     * @param {string} fileName 文件夹名称
+     */
     @action createFolder(uuid: string, fileName: string){
         return new Promise((resolve, reject)=>{
             instance.get(API.createFolder, {
@@ -105,6 +127,11 @@ export default class FileStore {
         })
     }
 
+    /**
+     * 判断文件是否存在
+     * @param {string} uuid 资料夹uuid
+     * @param {string} fileName 文件夹名称
+     */
     @action fileExist(uuid: string, fileName: string){
         return new Promise((resolve, reject)=>{
             instance.get(API.fileExist, {
@@ -121,6 +148,10 @@ export default class FileStore {
         })
     }
 
+    /**
+     * 获取资料夹允许容量
+     * @param {string} uuid 资料夹uuid
+     */
     @action checkCapacity(uuid: string){
         return new Promise((resolve, reject)=>{
             instance.get(API.checkCapacity, {
@@ -136,6 +167,12 @@ export default class FileStore {
         })
     }
 
+    /**
+     * 更新资料夹已使用容量
+     * @param {string} uuid 资料夹uuid
+     * @param {number} usageCapacity 更新的容量
+     * @param {string} how 更新方式，increase, decrease, overwrite
+     */
     @action updateUsage(uuid: string, usageCapacity: number, how: string){
         return new Promise((resolve, reject)=>{
             instance.put(API.updateUsage, {
@@ -154,6 +191,11 @@ export default class FileStore {
         })
     }
 
+    /**
+     * 更新允许容量
+     * @param {string} uuid 资料夹uuid
+     * @param {number} capacity 更新的容量
+     */
     @action updateCapacity(uuid: string, capacity: number){
         return new Promise((resolve, reject)=>{
             instance.put(API.updateCapacity, {
@@ -171,6 +213,13 @@ export default class FileStore {
         })
     }
 
+    /**
+     * 列举文件
+     * @param {string} uuid 资料夹uuid
+     * @param {string} path 子路径
+     * @param {string} delimiter 列举终止位置(详见阿里云OSS)
+     * @param {boolean} force 是否强制刷新，默认false，如果存在缓存，接口会返回缓存内容
+     */
     @action listFiles(uuid: string, path: string, delimiter: string = '/', force: boolean=false){
         return new Promise((resolve, reject)=>{
             instance.post(API.listFiles, {
@@ -187,6 +236,11 @@ export default class FileStore {
         })
     }
 
+    /**
+     * 下载文件
+     * @param {string} uuid 资料夹uuid
+     * @param {string} fileName 文件夹名称
+     */
     @action downloadFile(uuid: string, fileName: string){
         return new Promise((resolve, reject)=>{
             instance.get(API.downloadFile, {
@@ -203,6 +257,11 @@ export default class FileStore {
         })
     }
 
+    /**
+     * 删除文件
+     * @param {string} uuid 资料夹uuid
+     * @param {string} fileName 文件夹名称
+     */
     @action deleteFile(uuid: string, fileName: string){
         return new Promise((resolve, reject)=>{
             instance.delete(API.deleteFile, {
@@ -219,6 +278,11 @@ export default class FileStore {
         })
     }
 
+    /**
+     * 删除文件夹
+     * @param {string} uuid 资料夹uuid
+     * @param {string} path 文件夹路径
+     */
     @action deleteFolder(uuid: string, path: string){
         return new Promise((resolve, reject)=>{
             instance.post(API.deleteFolder, {
@@ -233,6 +297,11 @@ export default class FileStore {
         })
     }
 
+    /**
+     * 列举文件版本
+     * @param {string} uuid 资料夹uuid
+     * @param {string} path 文件夹路径
+     */
     @action listFileVersion(uuid: string, path: string){
         return new Promise((resolve, reject)=>{
             instance.get(API.listFileVersion, {
@@ -249,6 +318,13 @@ export default class FileStore {
         })
     }
 
+    /**
+     * 复制文件
+     * @param {string} uuid 资料夹uuid
+     * @param {string} origin 原始路径，包含文件名
+     * @param {string} dest 目标路径，包含文件名
+     * @param {string} versionId 复制文件的版本号
+     */
     @action copyFile(uuid: string, origin: string,
                      dest: string, versionId: string) {
         let copyFile: CopyFileProps = {
@@ -267,6 +343,11 @@ export default class FileStore {
         })
     }
 
+    /**
+     * 批量复制文件
+     * @param {string} uuid 资料夹uuid
+     * @param {string} dest 目标路径，不包含文件名
+     */
     @action async copyFiles(uuid: string, dest: string) {
         let copyList: MultiCopyFileProps = {file_uuid: uuid, copy_list: []}
         for (const item of this.copiedFile) {
@@ -304,6 +385,12 @@ export default class FileStore {
         })
     }
 
+    /**
+     * 列举删除标记
+     * @param {string} uuid 资料夹uuid
+     * @param {boolean} force 是否强制刷新，默认false，如果接口有缓存，则返回缓存
+     * @param {string} delimiter 查询终止位置，详见阿里云OSS文档
+     */
     @action listDeleteMarkers(uuid: string, force: boolean=false, delimiter: string = ''){
         return new Promise((resolve, reject)=>{
             instance.get(API.listDeleteMarkers, {
@@ -321,6 +408,11 @@ export default class FileStore {
         })
     }
 
+    /**
+     * 还原回收站的文件
+     * @param {string} uuid 资料夹uuid
+     * @param {string} path 文件夹路径
+     */
     @action restoreFile(uuid: string, path: string){
         return new Promise((resolve, reject)=>{
             instance.put(API.restoreFile, null, {
@@ -337,6 +429,11 @@ export default class FileStore {
         })
     }
 
+    /**
+     * 永久删除文件
+     * @param {string} uuid 资料夹uuid
+     * @param {string} fileName 文件名称
+     */
     @action deleteFileForever(uuid: string, fileName: string){
         return new Promise((resolve, reject)=>{
             instance.delete(API.deleteFileForever, {
@@ -353,6 +450,11 @@ export default class FileStore {
         })
     }
 
+    /**
+     * 批量永久删除文件
+     * @param {string} uuid 资料夹uuid
+     * @param {string[]} fileNames 文件名称数组
+     */
     @action deleteFilesForever(uuid: string, fileNames: string[]){
         return new Promise((resolve, reject)=>{
             instance.post(API.deleteFilesForever, {
@@ -367,6 +469,12 @@ export default class FileStore {
         })
     }
 
+    /**
+     * 文件重命名
+     * @param {string} uuid 资料夹uuid
+     * @param {string} objectName 文件原始名称 oss object key
+     * @param {string} newName 新名称
+     */
     @action Rename(uuid:string, objectName: string, newName: string){
         return new Promise((resolve, reject)=>{
             instance.put(API.rename,{
@@ -382,6 +490,12 @@ export default class FileStore {
         })
     }
 
+    /**
+     * 删除历史版本
+     * @param {string} uuid 资料夹uuid
+     * @param {string} path 文件路径
+     * @param {string} versionId 文件版本号
+     */
     @action deleteHistoryFile(uuid: string, path: string, versionId: string){
         return new Promise((resolve, reject)=>{
             instance.post(API.deleteHistoryFile, {
