@@ -1,3 +1,6 @@
+/**
+ * @description: 页面导航栏
+ */
 import React, { useEffect } from "react";
 import "./Navigation.less"
 import { ReactComponent as Logo } from "../../assets/LOGO.svg";
@@ -8,6 +11,9 @@ import Icon, { DownOutlined } from '@ant-design/icons';
 
 export const Navigation: React.FC<any> = ({ UserInfoStore, FileStore, LibraryStore }) => {
     const history: useHistory = useHistory();
+    /**
+     * 初始化用户信息
+     */
     const initUser = () => {
         const userName:string | null = localStorage.getItem('UserName')
         const token:string | null = localStorage.getItem('Token')
@@ -23,6 +29,9 @@ export const Navigation: React.FC<any> = ({ UserInfoStore, FileStore, LibrarySto
         UserInfoStore.setToken(token)
         UserInfoStore.readPlugin()
     }
+    /**
+     * 登出页面
+     */
     const signOut = () => {
         LibraryStore.clearLibraryList()
         LibraryStore.clearShowLibraryList()
@@ -32,6 +41,9 @@ export const Navigation: React.FC<any> = ({ UserInfoStore, FileStore, LibrarySto
         localStorage.removeItem('Token')
         history.replace('/login')
     }
+    /**
+     * 登出页面并删除缓存token
+     */
     const signOutDelToken = () => {
         UserInfoStore.delToken().then(() => {
             LibraryStore.clearLibraryList()
@@ -45,9 +57,15 @@ export const Navigation: React.FC<any> = ({ UserInfoStore, FileStore, LibrarySto
             message.error(error).then()
         })
     }
+    /**
+     * 路由跳转使用页面
+     */
     const clickRepository = () => {
         history.replace('/repository')
     }
+    /**
+     * 路由跳转后台
+     */
     const clickMangement = () => {
         history.replace('/mangement')
     }

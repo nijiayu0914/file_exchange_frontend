@@ -1,3 +1,6 @@
+/**
+ * @description: 文件组件
+ */
 import React, { useRef, useState } from "react";
 import "./File.less"
 import { inject, observer } from "mobx-react";
@@ -16,7 +19,7 @@ import {ReactComponent as Download} from "../../assets/pageicon/Download.svg";
 import {ReactComponent as Share} from "../../assets/pageicon/Share.svg";
 import {ReactComponent as RollBack} from "../../assets/pageicon/RollBack.svg";
 import {ReactComponent as Delete} from "../../assets/pageicon/Delete.svg";
-const FileViewer = React.lazy(() => import('react-file-viewer'));
+const FileViewer = React.lazy(() => import('react-file-viewer')); // 组件过大，采用懒加载
 
 export const File: React.FC<any> = (props) => {
     const {
@@ -28,6 +31,9 @@ export const File: React.FC<any> = (props) => {
     const [previewShow, setPreviewShow] =useState<boolean>(false)
     const [fileUrl, setFileUrl] =useState<string>('')
     const fileMainComponent = useRef(null)
+    /**
+     * 文件双击事件，对文件进行预览
+     */
     const doubleClickFile = async () => {
         if (file.category === 'folder') {
             changeFilePath(file.name.replace(uuid + '/', ''))
@@ -45,6 +51,10 @@ export const File: React.FC<any> = (props) => {
             setPreviewShow(true)
         }
     }
+    /**
+     * 文件点击事件
+     * @param e
+     */
     const click = (e) => {
         e.stopPropagation()
         if (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) {
@@ -56,6 +66,11 @@ export const File: React.FC<any> = (props) => {
         }
         cauSize()
     }
+    /**
+     * 文件重命名
+     * @param {string} uuid 资料夹uuid
+     * @param {string} objectName 文件名称 oss object key
+     */
     const renameFile = (uuid: string, objectName: string) => {
         let newName: string
         Modal.confirm({
@@ -78,7 +93,9 @@ export const File: React.FC<any> = (props) => {
             },
         });
     }
-
+    /**
+     * 列举文件历史版本
+     */
     const historyVersion = () => {
         FileStore.listFileVersion(
             uuid, file.name.replace(uuid + '/', '')).then(info => {
@@ -140,6 +157,9 @@ export const File: React.FC<any> = (props) => {
             })}
         )
     }
+    /**
+     * 右键菜单
+     */
     const menu = (
         <Menu
             selectable

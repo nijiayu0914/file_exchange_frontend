@@ -1,3 +1,6 @@
+/**
+ * @description: 资料夹列举组件
+ */
 import React, { useState, useEffect } from "react";
 import "./Library.less"
 import { BasicStyle } from "../../theme/classic"
@@ -8,14 +11,17 @@ const { Search } = Input;
 
 export const Library: React.FC<any> = ({ UserInfoStore, LibraryStore, FileStore }) => {
     const [libraryName, setlibraryName] = useState('');
-
-    useEffect(() => {
-        LibraryStore.listLibrary()
-        // eslint-disable-next-line
-    }, [])
+    /**
+     * 更新将被创建资料夹的名称
+     * @param e
+     */
     const CreatelibraryNameChange = (e) => {
         setlibraryName(e.target.value)
     }
+    /**
+     * 创建资料夹
+     * @param {string} libraryName 创建资料夹名称
+     */
     const createLibrary = (libraryName: string) => {
         if(!libraryName || libraryName.length === 0){
             message.warn("资料夹名称不能为空").then()
@@ -25,11 +31,21 @@ export const Library: React.FC<any> = ({ UserInfoStore, LibraryStore, FileStore 
             LibraryStore.createLibrary(libraryName)
         }
     }
+    /**
+     * 打开资料夹
+     * @param {string} uuid 资料夹uuid
+     * @param {string} libraryName 资料夹名称
+     */
     const openLibrary = (uuid: string, libraryName: string) => {
         LibraryStore.openLibrary(uuid, libraryName)
         FileStore.clearCheckedFile()
         FileStore.setActiveLibrary(uuid)
     }
+    /**
+     * 弹窗更改资料夹名称
+     * @param {string} uuid 资料夹uuid
+     * @param {string} originName 资料夹原名
+     */
     const modalRename = (uuid: string, originName: string) => {
         let newName: string = originName
         Modal.info({
@@ -49,6 +65,11 @@ export const Library: React.FC<any> = ({ UserInfoStore, LibraryStore, FileStore 
             },
         });
     }
+    /**
+     * 弹窗确认删除资料夹
+     * @param {string} uuid 资料夹uuid
+     * @param {string} originName 资料夹名称
+     */
     const modalDelete = (uuid: string, originName: string) => {
         Modal.confirm({
             title: "确定删除资料夹:" + originName + "?",
@@ -66,6 +87,10 @@ export const Library: React.FC<any> = ({ UserInfoStore, LibraryStore, FileStore 
             },
         });
     }
+    useEffect(() => {
+        LibraryStore.listLibrary()
+        // eslint-disable-next-line
+    }, [])
     return (
         <div className="library_container">
             <div className="library_title">

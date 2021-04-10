@@ -1,3 +1,6 @@
+/**
+ * @description: 用户注册
+ */
 import React from "react";
 import "./SignUp.less"
 import { useHistory } from 'react-router-dom';
@@ -8,18 +11,33 @@ import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 
 const SignUp: React.FC<any> = ({UserInfoStore}) => {
     const history: useHistory = useHistory();
+    /**
+     * 更新用户名
+     * @param e
+     */
     const setUserName = (e) => {
         UserInfoStore.setUserName(e.target.value)
     }
+    /**
+     * 更新密码
+     * @param e
+     */
     const setPassword = (e) => {
         UserInfoStore.setPassword(e.target.value)
     }
+    /**
+     * 更新确认密码
+     * @param e
+     */
     const setPasswordAgain = (e) => {
         UserInfoStore.setPasswordAgain(e.target.value)
     }
+    /**
+     * 注册函数
+     */
     const register = () => {
         UserInfoStore.register().then(() => {
-            history.replace('/repository')
+            history.replace('/repository') // 注册成功进入主页面
         })
     }
     return (

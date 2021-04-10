@@ -1,3 +1,6 @@
+/**
+ * @description: 文件Icon组件
+ */
 import React from "react";
 import "./FileIcon.less"
 import Icon from '@ant-design/icons';

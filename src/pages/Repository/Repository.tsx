@@ -1,3 +1,6 @@
+/**
+ * @description: 功能主页
+ */
 import React from "react";
 import "./Repository.less";
 import Navigation from "../../components/Navigation/Navigation";

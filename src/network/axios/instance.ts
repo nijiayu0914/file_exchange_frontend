@@ -1,3 +1,6 @@
+/**
+ * @description: axios接口调用实例封装
+ */
 import axios from 'axios';
 import { REACT_APP_BASE_URL } from "../../config"
 
@@ -6,6 +9,7 @@ const instance = axios.create({
     timeout: 40000
 });
 instance.interceptors.request.use((config) => {
+    // 获取浏览器缓存中的用户名和token，免登陆
     config.headers['Authorization'] = localStorage.getItem("Token");
     config.headers['User-Name'] = localStorage.getItem("UserName");
     config.headers['Access-Control-Allow-Origin'] = REACT_APP_BASE_URL

@@ -1,3 +1,6 @@
+/**
+ * @description: APP根目录
+ */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.less';

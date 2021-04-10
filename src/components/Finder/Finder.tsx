@@ -1,3 +1,6 @@
+/**
+ * @description: 文件展示界面组件
+ */
 import React from "react";
 import "./Finder.less";
 import { inject, observer } from "mobx-react";
@@ -8,10 +11,18 @@ import CurrentStatistic from "../CurrentStatistic/CurrentStatistic";
 const { TabPane } = Tabs;
 
 export const Finder: React.FC<any> = ({ LibraryStore, FileStore }) => {
+    /**
+     * 切换激活的文件夹，tab pane卡片切换
+     * @param {string} uuid 资料夹uuid
+     */
     const triggerLibrary = (uuid: string) => {
         FileStore.setActiveLibrary(uuid)
         FileStore.clearCheckedFile()
     }
+    /**
+     * 关闭资料夹
+     * @param {string} uuid 资料夹uuid
+     */
     const closeLibrary = (uuid: string) => {
         LibraryStore.closeLibrary(uuid)
         if(uuid === FileStore.activeLibrary){

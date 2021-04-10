@@ -1,3 +1,6 @@
+/**
+ * @description: 网盘文件操作功能核心接口组件
+ */
 import React, { useState, useEffect, useRef } from "react";
 import "./Files.less";
 import { REACT_APP_HTTPS } from "../../config"
@@ -36,11 +39,17 @@ export const Files: React.FC<any> = (props) => {
     const [contextMenuSelected, setContextMenuSelected] = useState<string[]>([])
     const uploadComponent = useRef(null)
 
+    /**
+     * 模拟ctrl + c  ctrl + v 复制粘贴操作
+     * @param e
+     */
     const copyKeyboardEvent = (e) => {
+        // ctrl + c
         if(e.keyCode === 67){
             if(navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey){
                 FileStore.addCopiedFile()
             }
+            // ctrl + v
         }else if(e.keyCode === 86){
             if(navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey){
                 FileStore.copyFiles(uuid, uuid + '/' + currentFilePath).then(() => {
@@ -50,6 +59,10 @@ export const Files: React.FC<any> = (props) => {
             }
         }
     }
+    /**
+     * 添加历史搜索路径，模拟文件夹前进后退操作
+     * @param {string} path 当前路径
+     */
     const addHistoryPath = (path: string) => {
         if(historyPathCursor === 0){
             let oldPath = historyPath.slice(0)
@@ -67,6 +80,9 @@ export const Files: React.FC<any> = (props) => {
             setHistoryPathCursor(0)
         }
     }
+    /**
+     * 文件夹后退操作
+     */
     const historyBackward = () => {
         if(historyPathCursor < historyPath.length - 1){
             let path: string = historyPath[historyPathCursor + 1]
@@ -74,6 +90,9 @@ export const Files: React.FC<any> = (props) => {
             changeFilePath(path, false)
         }
     }
+    /**
+     * 文件夹前进操作
+     */
     const historyForward = () => {
         if(historyPathCursor > 0){
             let path: string = historyPath[historyPathCursor - 1]
@@ -81,9 +100,18 @@ export const Files: React.FC<any> = (props) => {
             changeFilePath(path, false)
         }
     }
+    /**
+     * 更改搜索路径
+     * @param {string} path 搜索路径
+     */
     const changeSearchPath = (path: string) => {
         setCurrentSearchPath(path)
     }
+    /**
+     * 更改当前文件夹路径
+     * @param {string} path 搜索路径
+     * @param {boolean} addHistory 是否添加到历史搜索记录
+     */
     const changeFilePath = (path: string, addHistory: boolean = true) => {
         setCurrentFilePath(path)
         setCurrentSearchPath(path)
@@ -91,11 +119,21 @@ export const Files: React.FC<any> = (props) => {
             addHistoryPath(path)
         }
     }
+    /**
+     * 切换展示方式，大图标 or 平铺
+     */
     const showMethodTrigger = () => {
         setShowMethod((prevState => {
+            localStorage.setItem("showMethod", String(!prevState))
             return !prevState
         }))
     }
+    /**
+     * 列举当前路径下文件
+     * @param {string} uuid 资料夹uuid
+     * @param {string} currentFilePath 当前文件路径
+     * @param {boolean} force 是否强制刷新缓存
+     */
     const listFiles = (uuid: string, currentFilePath: string, force: boolean = false) => {
         setControlClick(true)
         FileStore.listFiles(uuid, currentFilePath, '/', force).then((res) => {
@@ -166,6 +204,11 @@ export const Files: React.FC<any> = (props) => {
             }, 5000)
         })
     }
+    /**
+     * 创建文件夹
+     * @param {string} uuid 资料夹uuid
+     * @param {string} currentFilePath 当前文件路径
+     */
     const createFolderModal = (uuid: string, currentFilePath: string) => {
         let folderName: string
         Modal.confirm({
@@ -194,6 +237,9 @@ export const Files: React.FC<any> = (props) => {
             },
         });
     }
+    /**
+     * 计算选中文件的大小之和
+     */
     const cauSize = () => {
         let sizeAll: number = 0
         currentFileList.forEach(item => {
@@ -213,6 +259,9 @@ export const Files: React.FC<any> = (props) => {
         }
         setCheckedSize(res)
     }
+    /**
+     * 查看文件明细
+     */
     const clickLook = () => {
         setLook((pre: boolean) => {
             return !pre
@@ -225,6 +274,10 @@ export const Files: React.FC<any> = (props) => {
         })
         setlookedFile(lookedFile)
     }
+    /**
+     * 下载文件
+     * @param {boolean} download 默认true为下载，false只返回url路径
+     */
     const downloadFile = async (download: boolean = true) => {
         for (const item of currentFileList) {
             if (FileStore.checkedFile.has(item.name)) {
@@ -248,6 +301,9 @@ export const Files: React.FC<any> = (props) => {
             }
         }
     }
+    /**
+     * 删除文件
+     */
     const deleteFile = async () => {
         for (const item of currentFileList) {
             if (FileStore.checkedFile.has(item.name)) {
@@ -263,6 +319,10 @@ export const Files: React.FC<any> = (props) => {
         }
         listFiles(uuid, currentFilePath, true)
     }
+    /**
+     * 模拟shift批量选中文件
+     * @param {number} key 当前选中的文件的key
+     */
     const shiftAddCheckedFile = (key: number) => {
         let gap: number[] = [key]
         let hasChecked = Array.from(FileStore.checkedFile)
@@ -302,6 +362,18 @@ export const Files: React.FC<any> = (props) => {
             setControlClick(false)
         }
     }, []);
+    useEffect(() => {
+        //根据浏览器缓存，获取展示方式
+        let method: string | null = localStorage.getItem("showMethod")
+        if (method === null){
+            setShowMethod(true)
+        }else if(method === "true"){
+            setShowMethod(true)
+        }else{
+            setShowMethod(false)
+        }
+
+    }, [])
     const menu = (
         <Menu
             selectable
@@ -420,6 +492,11 @@ export const Files: React.FC<any> = (props) => {
                             multiple={true}
                             showUploadList={false}
                             beforeUpload={
+                                /**
+                                 * 上传文件前检测
+                                 * @param file 单个文件
+                                 * @param fileList 批量文件数组
+                                 */
                                 (file, fileList) => {
                                     if(fileList.length === 1){
                                         if(file.name.indexOf("/") !== -1){
@@ -446,7 +523,8 @@ export const Files: React.FC<any> = (props) => {
                                     }
                                 }
                             }
-                            customRequest={async (file) => {
+                            customRequest={
+                                async (file) => {
                                 const capCheck = await FileStore.checkCapacity(uuid)
                                 if(file.file['size'] / 1024 / 1024 > capCheck['data']['free']){
                                     message.warning("已超限额，无法上传")
@@ -454,6 +532,7 @@ export const Files: React.FC<any> = (props) => {
                                 }
                                 const sts = await FileStore.createSTS()
                                 const ossClientParams: AliyunSTSProps = sts.data
+                                // 是否使用https
                                 ossClientParams['secure'] = REACT_APP_HTTPS ? JSON.parse(REACT_APP_HTTPS) : false
 
                                 let client = new OSS(ossClientParams)
@@ -577,6 +656,7 @@ export const Files: React.FC<any> = (props) => {
                 >
                     {currentFileList.map((item, index) => {
                         return <File
+                            //列举显示文件
                             key={index}
                             listIndex={index}
                             uuid = {uuid}

@@ -1,3 +1,6 @@
+/**
+ * @description: APP主题配色JS版，用于在组件中引入
+ */
 export const BasicStyle = {
     '@body-background': '#F3F4F7',
     '@component-background': '#fff',
